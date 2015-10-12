@@ -1,7 +1,7 @@
 {
   "name": "node-enocean",
   "version": "0.0.1",
-  "description": "full implementation of the enocean protocol",
+  "description": "full implementation of the enocean protocol (ERP + EEP)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
