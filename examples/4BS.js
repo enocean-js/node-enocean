@@ -4,7 +4,6 @@ var knownSensors = {};              // array to store sensor Information
 enocean.listen("/dev/ttyUSB0");     // start listening to the serialport
 
 enocean.on("data",function(data){   // a telegram has been received
-console.log(data.learnBit)
 	if(knownSensors[data.senderId]!=undefined){ // only handle sensors we have previously leraned
 		if(data.learnBit==1){
 			var val=knownSensors[data.senderId].eep.getValue(data)
