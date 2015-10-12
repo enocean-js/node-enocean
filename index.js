@@ -1,10 +1,12 @@
 var SerialPort   = require("serialport").SerialPort;
 var EventEmitter = require('events').EventEmitter;
 var Telegram     = require("./telegram.js");
+var eep          = require("./eep.js")
 
 function SerialPortListener(){
 	var serialport = null;
 	var tmp        = null;
+	this.eep       = eep;
 	this.listen    = function(port){
 		serialPort = new SerialPort(port,{baudrate: 57600});      
 		serialPort.on("open",function(){
