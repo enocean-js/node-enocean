@@ -1,6 +1,6 @@
 {
   "name": "node-enocean",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "full implementation of the enocean protocol (ERP + EEP)",
   "main": "index.js",
   "scripts": {
