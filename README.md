@@ -6,7 +6,7 @@ npm install node-enocean
 ```
 ##usage
 ```
-var enocean      = require("../");  
+var enocean      = require("node-enocean");  
 enocean.listen("/dev/ttyUSB0"); 
 enocean.on("data",function(data){   
 	console.log(data) 
