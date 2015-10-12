@@ -1,3 +1,6 @@
 # node-enocean
-an enocen implementation for node.js
-more to come...
+an enocean implementation for node.js
+install with npm:
+```
+npm install node-enocean
+```
