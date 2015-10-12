@@ -1,7 +1,7 @@
 var enocean=require("../");
 var knownSensors={};
 
-enocean.listen("/dev/ttyAMA0")
+enocean.listen("/dev/ttyUSB0")
 enocean.on("data",function(data){
 	if(knownSensors[data.senderId]!=undefined){
 		if(data.learnBit==1){
@@ -36,8 +36,8 @@ eep_Lookup={
 			max:0
 		},
 		bitrange:{
-			mask:0b1111111100000000,
-			shift:8,
+			mask:parseInt("1111111100000000",2),
+			shift:8
 		},
 		datarange:{
 			min:-20,
