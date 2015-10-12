@@ -1,0 +1,15 @@
+{
+  "name": "node-enocean",
+  "version": "0.0.1",
+  "description": "full implementation of the enocean protocol",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Holger Will",
+  "license": "ISC",
+  "dependencies": {
+    "crc": "^3.3.0",
+    "node-bitarray": "0.0.2"
+  }
+}
