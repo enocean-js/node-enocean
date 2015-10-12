@@ -38,7 +38,20 @@ module.exports=function enocean_Telegram(data){
 			}
 			break;
 			case "f6":
-			this.packetTypeString="RPS"
+				this.raw=buf[7].toString(16)
+				if(this.raw==50){
+					this.button="B1"
+					this.state="down"
+				}
+				if(this.raw==70){
+					this.button="B0"
+					this.state="down"
+				}
+				if(this.raw==0){
+					this.eep="?"
+					this.state="up"
+				}
+				this.packetTypeString="RPS"
 			break;
 			case "d5":
 			this.packetTypeString="1BS"
