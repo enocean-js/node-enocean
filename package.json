@@ -14,7 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "crc": "^3.3.0",
-    "node-bitarray": "0.0.2",
     "serialport": "^1.7.4"
   }
 }
