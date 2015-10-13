@@ -8,6 +8,29 @@ function getSingleValue(data){
 	return {value:val,type:this.type,unit:this.unit}
 }
 
+function getMultiValues(data){
+	var ret=[]
+	for(var i=0;i<this.valuerange.min.length;i++){
+		switch(this.valuetype[i]){
+			case "number":
+				var rawVal = ((data.raw & this.bitrange.mask[i])>>>this.bitrange.shift[i])
+				Rmin       = this.valuerange.min[i]
+				Rmax       = this.valuerange.max[i]
+				Smin       = this.datarange.min[i]
+				Smax       = this.datarange.max[i]
+				var val    = ((Smax-Smin)/(Rmax-Rmin))*(rawVal-Rmin)+Smin
+				if(rawVal>this.valuerange.max[i] || rawVal<this.valuerange.min[i]){val="undefined"}
+				ret.push({value:val,type:this.type[i],unit:this.unit[i],raw:rawVal})
+			break;
+			case "enum":
+				var rawVal = ((data.raw & this.bitrange.mask[i])>>this.bitrange.shift[i])
+				ret.push({value:this.datarange.min[i][rawVal],type:this.type[i],unit:this.unit[i]})
+			break;
+		}
+	}
+	return ret
+}
+
 module.exports = {
 //------------------------------------------------------------------------------------------
 // temperature sensors a5-2-1 to a5-2-30
@@ -460,6 +483,25 @@ module.exports = {
 			max:62.3
 		},
 		getValue:getSingleValue,
+	},
+//------------------------------------------------------------------------------------------
+	"a5-10-11":{
+		valuetype:["number","number","number","enum"],
+		type:["SetPoint","humidity","temperature","Day/Night"],
+		unit:["","%rF","°C",""],
+		valuerange:{
+			min:[0,0,0,"enum"],
+			max:[255,250,250,"enum"]
+		},
+		bitrange:{
+			mask:[parseInt("11111111000000000000000000000000",2),parseInt("111111110000000000000000",2),parseInt("1111111100000000",2),parseInt("1",2)],
+			shift:[24,16,8,0],
+		},
+		datarange:{
+			min:[0,0,0,["Night","Day"]],
+			max:[255,100,40]
+		},
+		getValue:getMultiValues,
 	}
 }
 
