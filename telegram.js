@@ -37,7 +37,7 @@ module.exports=function enocean_Telegram(data){
 				//console.log(func)
 				var type=((parseInt("00000011111110000000000000000000",2) & this.raw)>>19).toString(16);
 				this.eep="a5-"+func+"-"+type;
-				var MANUFACTURERID=(parseInt("00000000000001111111111100000000",2) & this.raw)>>8);
+				var MANUFACTURERID=(parseInt("00000000000001111111111100000000",2) & this.raw)>>8;
 				this.manufacturer=Manufacturer_List[MANUFACTURERID]
 			}
 			break;
