@@ -10,6 +10,7 @@ function SerialPortListener(){
 	this.listen    = function(port){
 		serialPort = new SerialPort(port,{baudrate: 57600});      
 		serialPort.on("open",function(){
+			this.emit("open")
 			serialPort.on('data',function(data){
 				var buf = new Buffer(data);
 
@@ -27,7 +28,8 @@ function SerialPortListener(){
 						if(buf.length == totalExpectedLength){ //if we receive the complete telegram in one go, fill the data structure with it
 							var telegram = new Telegram();
 							telegram.loadFromBuffer(buf);
-							this.emit("data",telegram);
+							if(telegram.packetType==1){this.emit("data",telegram);}
+							if(telegram.packetType==2){this.emit("response",telegram);}
 						}
 					}else{
 
@@ -42,7 +44,8 @@ function SerialPortListener(){
 							if(buf.length == totalExpectedLength){ //if we receive the complete telegram , fill the data structure with it
 								var telegram = new Telegram();
 								telegram.loadFromBuffer(buf);
-								this.emit("data",telegram);
+								if(telegram.packetType==1){this.emit("data",telegram);}
+								if(telegram.packetType==2){this.emit("response",telegram);}
 							}
 						}
 					}

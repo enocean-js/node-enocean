@@ -20,51 +20,60 @@ module.exports=function enocean_Telegram(data){
 		var headerCRC=buf[5]
 		var rawDataByte=buf.slice(6,dataLength+6)
 		
-		this.senderId=buf.slice(dataLength+1,dataLength+5).toString("hex")
-		this.choice=buf[6].toString(16)
-		switch(this.choice.toString(16)){
-			case "a5":
-			this.packetTypeString="4BS"
-			//get the 4 (8bit) Bytes into a 32 Bit Integer
-			this.raw=parseInt(buf.slice(7,11).toString("hex"),16)
-			// this.rawBin=pad(this.raw.toString(2),32) // binary reprensentaion for debugging
-			// this.rawHex=pad(this.raw.toString(16),8) // hex reprensentaion for debugging
-			//now we can use binary operators to extract bits and values 
-			this.learnBit=(this.raw & 8)>>3 // Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
-			if(this.learnBit==0){
-				//var func="BitArray.toHexadecimal(rawPayloadBin.slice(0,6).reverse())";
-				var func=((parseInt("11111100000000000000000000000000",2) & this.raw)>>26).toString(16);
-				//console.log(func)
-				var type=((parseInt("00000011111110000000000000000000",2) & this.raw)>>19).toString(16);
-				this.eep="a5-"+func+"-"+type;
-				var MANUFACTURERID=(parseInt("00000000000001111111111100000000",2) & this.raw)>>8;
-				this.manufacturer=Manufacturer_List[MANUFACTURERID]
-			}
-			break;
-			case "f6":
-				this.raw=buf[7].toString(16)
-				if(this.raw==50){
-					this.eep="f6-2-3"
-					this.button="B1"
-					this.state="down"
+		
+		switch(this.packetType){
+			case 2:
+				this.packetTypeString="RESPONSE"
+				this.returnCode=buf[6]
+				this.raw=rawDataByte
+				break;
+			case 1:
+				this.senderId=buf.slice(dataLength+1,dataLength+5).toString("hex")
+				this.choice=buf[6].toString(16)
+				switch(this.choice.toString(16)){
+					case "a5":
+					this.packetTypeString="4BS"
+					//get the 4 (8bit) Bytes into a 32 Bit Integer
+					this.raw=parseInt(buf.slice(7,11).toString("hex"),16)
+					// this.rawBin=pad(this.raw.toString(2),32) // binary reprensentaion for debugging
+					// this.rawHex=pad(this.raw.toString(16),8) // hex reprensentaion for debugging
+					//now we can use binary operators to extract bits and values 
+					this.learnBit=(this.raw & 8)>>3 // Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
+					if(this.learnBit==0){
+						//var func="BitArray.toHexadecimal(rawPayloadBin.slice(0,6).reverse())";
+						var func=((parseInt("11111100000000000000000000000000",2) & this.raw)>>26).toString(16);
+						//console.log(func)
+						var type=((parseInt("00000011111110000000000000000000",2) & this.raw)>>19).toString(16);
+						this.eep="a5-"+func+"-"+type;
+						var MANUFACTURERID=(parseInt("00000000000001111111111100000000",2) & this.raw)>>8;
+						this.manufacturer=Manufacturer_List[MANUFACTURERID]
+					}
+					break;
+					case "f6":
+						this.raw=buf[7].toString(16)
+						if(this.raw==50){
+							this.eep="f6-2-3"
+							this.button="B1"
+							this.state="down"
+						}
+						if(this.raw==70){
+							this.eep="f6-2-3"
+							this.button="B0"
+							this.state="down"
+						}
+						if(this.raw==0){
+							this.eep="?"
+							this.state="up"
+						}
+						this.packetTypeString="RPS"
+					break;
+					case "d5":
+					this.packetTypeString="1BS"
+					break;	
 				}
-				if(this.raw==70){
-					this.eep="f6-2-3"
-					this.button="B0"
-					this.state="down"
-				}
-				if(this.raw==0){
-					this.eep="?"
-					this.state="up"
-				}
-				this.packetTypeString="RPS"
 			break;
-			case "d5":
-			this.packetTypeString="1BS"
-			break;
-			
 		}
-		}
+	}
 	this.toString=function(){
 		var st="rawData: "+this.rawDataByte.toString("hex")
 		st+="\nPacketType:"+this.packetType.toString(16)
