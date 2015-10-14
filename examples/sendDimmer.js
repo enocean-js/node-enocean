@@ -4,10 +4,17 @@ enocean.listen("/dev/ttyUSB0");              // open the serialport
 enocean.on("ready",function(base){           // when ready
 
 	var dimmer = new enocean.Dimmer(2)
-	if(process.argv[2]=="teach"){
+	dimmer.speed="50"
+	switch(process.argv[2]){
+	case "teach":
 		dimmer.teach();
-	}else{
+	break;
+	case "off":
+		dimmer.off();
+	break;
+	default:
 		dimmer.setValue(process.argv[2]);
+	break;
 	}
 	setTimeout(function(){enocean.close()},200)
 })

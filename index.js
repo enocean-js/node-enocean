@@ -86,16 +86,23 @@ function SerialPortListener(){
 		this.parent=parent;
 		this.head="55000a0701eb";
 		this.adr=(parseInt(base,16)+offset).toString(16)
+		this.speed="01"
 		this.setValue=function(val){
-			var value=parseInt(val).toString(16)
+			var value=pad(parseInt(val).toString(16),2)
 			console.log(value)
-			var b1="a502"+value+"0109"+this.adr+"3001ffffffffff00";
-			b1+=crc(new Buffer(b1,"hex")).toString(16)
+			var b1="a502"+value+this.speed+"09"+this.adr+"3001ffffffffff00";
+			b1+=pad(crc(new Buffer(b1,"hex")).toString(16),2)
 			parent.send({raw:this.head+b1})
 		}
 		this.teach=function(){
 			var b1="a502000000"+this.adr+"3001ffffffffff00";
-			b1+=crc(new Buffer(b1,"hex")).toString(16)
+			b1+=pad(crc(new Buffer(b1,"hex")).toString(16),2)
+			parent.send({raw:this.head+b1})
+		}
+		this.off=function(){
+			var b1="a502000008"+this.adr+"3001ffffffffff00";
+			b1+=pad(crc(new Buffer(b1,"hex")).toString(16),2)
+			console.log(b1)
 			parent.send({raw:this.head+b1})
 		}
 	}
@@ -175,4 +182,7 @@ SerialPortListener.prototype.__proto__ = EventEmitter.prototype;
 module.exports = new SerialPortListener();
 
 
-
+function pad(num,size) {
+    var s = "00000000000000000000000000000000" + num;
+    return s.substr(s.length-size);
+}
