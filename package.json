@@ -1,7 +1,7 @@
 {
   "name": "node-enocean",
   "version": "0.1.7",
-  "description": "full implementation of the enocean protocol (ERP + EEP)",
+  "description": "full implementation of the enocean protocol (ESP3 + EEP2.6)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,7 +13,6 @@
   "author": "Holger Will",
   "license": "ISC",
   "dependencies": {
-    "crc": "^3.3.0",
     "serialport": "^2.0.0"
   }
 }

@@ -3,8 +3,10 @@ var EventEmitter = require('events').EventEmitter;
 var Telegram     = require("./telegram.js");
 var eep          = require("./eep.js")
 var crc          = require("./crc.js")
+var config          = require("./config.json")
 
 function SerialPortListener(){
+	var base=config.base;
 	var serialPort = null;
 	var tmp        = null;
 	this.eep       = eep;
@@ -16,7 +18,7 @@ function SerialPortListener(){
 		serialPort = new SerialPort(port,{baudrate: 57600});  
 		
 		serialPort.on("open",function(){
-			this.emit("open")
+			setTimeout(function(){this.emit("ready")}.bind(this),1000)
 			serialPort.on('data',function(data){
 				var buf = new Buffer(data);
 
@@ -39,7 +41,8 @@ function SerialPortListener(){
 								
 								if(telegram.hasOwnProperty("base")){
 									this.base=telegram.base;
-									this.emit("ready",telegram.base);
+									base=this.base;
+									this.emit("base",telegram.base);
 								}
 								this.emit("response",telegram);
 							}
@@ -62,7 +65,8 @@ function SerialPortListener(){
 								
 								if(telegram.hasOwnProperty("base")){
 									this.base=telegram.base;
-									this.emit("ready",telegram.base);
+									base=this.base;
+									this.emit("base",telegram.base);
 								}
 								this.emit("response",telegram);
 							}
@@ -70,19 +74,94 @@ function SerialPortListener(){
 						}
 					}
 				}.bind(this));
-				this.getBase()
 			}.bind(this));
 		}
+
 	this.send = function(obj){
 		if(obj.hasOwnProperty("raw")){
 			var buf1 = new Buffer(obj.raw,"hex");
 			serialPort.write(buf1);
 		}
 	}
+
 	this.getBase = function(){
 		this.send({raw:"5500010005700838"})
+	}
+
+	var parent=this;
+	this.Button=function (offset){
+		this.parent=parent;
+		this.head="55000707017a"
+		this.adr=(parseInt(base,16)+offset).toString(16)
+		this.B0={
+			click:function(){
+				this.B0.down()
+				this.B0.up()
+			}.bind(this),
+			down:function(){
+				var b1 = "f670"+this.adr+"3001ffffffffff00";
+				b1+=crc(new Buffer(b1,"hex")).toString(16)
+				parent.send({raw:this.head+b1})
+			}.bind(this),
+			up:function(){
+				var b2 = "f600"+this.adr+"3001ffffffffff00";
+				b2+=crc(new Buffer(b2,"hex")).toString(16)
+				parent.send({raw:this.head+b2})
+			}.bind(this)
+		}
+		this.B1={
+			click:function(){
+				this.B1.down()
+				this.B1.up()
+			}.bind(this),
+			down:function(){
+				var b1 = "f650"+this.adr+"3001ffffffffff00";
+				b1+=crc(new Buffer(b1,"hex")).toString(16)
+				parent.send({raw:this.head+b1})
+			}.bind(this),
+			up:function(){
+				var b2 = "f600"+this.adr+"3001ffffffffff00";
+				b2+=crc(new Buffer(b2,"hex")).toString(16)
+				parent.send({raw:this.head+b2})
+			}.bind(this)
+		}
+		this.A0={
+			click:function(){
+				this.A0.down()
+				this.A0.up()
+			}.bind(this),
+			down:function(){
+				var b1 = "f630"+this.adr+"3001ffffffffff00";
+				b1+=crc(new Buffer(b1,"hex")).toString(16)
+				parent.send({raw:this.head+b1})
+			}.bind(this),
+			up:function(){
+				var b2 = "f600"+this.adr+"3001ffffffffff00";
+				b2+=crc(new Buffer(b2,"hex")).toString(16)
+				parent.send({raw:this.head+b2})
+			}.bind(this)
+		}
+		this.A1={
+			click:function(){
+				this.A1.down()
+				this.A1.up()
+			}.bind(this),
+			down:function(){
+				var b1 = "f610"+this.adr+"3001ffffffffff00";
+				b1+=crc(new Buffer(b1,"hex")).toString(16)
+				parent.send({raw:this.head+b1})
+			}.bind(this),
+			up:function(){
+				var b2 = "f600"+this.adr+"3001ffffffffff00";
+				b2+=crc(new Buffer(b2,"hex")).toString(16)
+				parent.send({raw:this.head+b2})
+			}.bind(this)
+		}
 	}
 }
 
 SerialPortListener.prototype.__proto__ = EventEmitter.prototype;	
 module.exports = new SerialPortListener();
+
+
+
