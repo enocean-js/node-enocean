@@ -1,4 +1,4 @@
-var enocean      = require("../");           // require node-enocean
+var enocean = require("../");           // require node-enocean
 
 enocean.listen("/dev/ttyUSB0");              // open the serialport
 enocean.on("ready",function(base){           // when ready
@@ -10,4 +10,4 @@ enocean.on("ready",function(base){           // when ready
 		button.B1.click()	
 	}
 	setTimeout(function(){enocean.close()},200)
-})
+});
