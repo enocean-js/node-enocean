@@ -14,6 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "crc": "^3.3.0",
-    "serialport": "^1.7.4"
+    "serialport": "^2.0.0"
   }
 }
