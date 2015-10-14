@@ -81,6 +81,25 @@ function SerialPortListener(){
 	}
 
 	var parent=this;
+
+	this.Dimmer=function (offset){
+		this.parent=parent;
+		this.head="55000a0701eb";
+		this.adr=(parseInt(base,16)+offset).toString(16)
+		this.setValue=function(val){
+			var value=parseInt(val).toString(16)
+			console.log(value)
+			var b1="a502"+value+"0109"+this.adr+"3001ffffffffff00";
+			b1+=crc(new Buffer(b1,"hex")).toString(16)
+			parent.send({raw:this.head+b1})
+		}
+		this.teach=function(){
+			var b1="a502000000"+this.adr+"3001ffffffffff00";
+			b1+=crc(new Buffer(b1,"hex")).toString(16)
+			parent.send({raw:this.head+b1})
+		}
+	}
+
 	this.Button=function (offset){
 		this.parent=parent;
 		this.head="55000707017a";
