@@ -34,16 +34,10 @@ module.exports=function enocean_Telegram(data){
 				switch(this.choice.toString(16)){
 					case "a5":
 					this.packetTypeString="4BS"
-					//get the 4 (8bit) Bytes into a 32 Bit Integer
 					this.raw=parseInt(buf.slice(7,11).toString("hex"),16)
-					// this.rawBin=pad(this.raw.toString(2),32) // binary reprensentaion for debugging
-					// this.rawHex=pad(this.raw.toString(16),8) // hex reprensentaion for debugging
-					//now we can use binary operators to extract bits and values 
 					this.learnBit=(this.raw & 8)>>3 // Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
 					if(this.learnBit==0){
-						//var func="BitArray.toHexadecimal(rawPayloadBin.slice(0,6).reverse())";
 						var func=((parseInt("11111100000000000000000000000000",2) & this.raw)>>26).toString(16);
-						//console.log(func)
 						var type=((parseInt("00000011111110000000000000000000",2) & this.raw)>>19).toString(16);
 						this.eep="a5-"+func+"-"+type;
 						var MANUFACTURERID=(parseInt("00000000000001111111111100000000",2) & this.raw)>>8;
@@ -83,7 +77,6 @@ module.exports=function enocean_Telegram(data){
 		//st+="\nBin:"+this.rawPayloadBin
 		return st }
 	}
-
 function pad(num,size) {
     var s = "00000000000000000000000000000000" + num;
     return s.substr(s.length-size);
