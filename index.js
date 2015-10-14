@@ -18,7 +18,7 @@ function SerialPortListener(){
 		serialPort = new SerialPort(port,{baudrate: 57600});  
 		
 		serialPort.on("open",function(){
-			setTimeout(function(){this.emit("ready")}.bind(this),1000)
+			this.emit("ready");
 			serialPort.on('data',function(data){
 				var buf = new Buffer(data);
 
@@ -34,18 +34,7 @@ function SerialPortListener(){
 
 						tmp=data;
 						if(buf.length == totalExpectedLength){ //if we receive the complete telegram in one go, fill the data structure with it
-							var telegram = new Telegram();
-							telegram.loadFromBuffer(buf);
-							this.emit("data",telegram);
-							if(telegram.packetType==2){
-								
-								if(telegram.hasOwnProperty("base")){
-									this.base=telegram.base;
-									base=this.base;
-									this.emit("base",telegram.base);
-								}
-								this.emit("response",telegram);
-							}
+							this.receive(buf);
 						}
 					}else{
 
@@ -58,24 +47,27 @@ function SerialPortListener(){
 							var optionalLength      = buf[3];
 							var totalExpectedLength = length + optionalLength + 6 + 1  //total lengh of package (+6 header length, +1 crc checksum)
 							if(buf.length == totalExpectedLength){ //if we receive the complete telegram , fill the data structure with it
-								var telegram = new Telegram();
-								telegram.loadFromBuffer(buf);
-								this.emit("data",telegram);
-								if(telegram.packetType==2){
-								
-								if(telegram.hasOwnProperty("base")){
-									this.base=telegram.base;
-									base=this.base;
-									this.emit("base",telegram.base);
-								}
-								this.emit("response",telegram);
-							}
+								this.receive(buf);
 							}
 						}
 					}
 				}.bind(this));
 			}.bind(this));
 		}
+
+	this.receive=function(buf){
+		var telegram = new Telegram();
+		telegram.loadFromBuffer(buf);
+		this.emit("data",telegram);
+		if(telegram.packetType==2){
+			if(telegram.hasOwnProperty("base")){
+				this.base=telegram.base;
+				base=this.base;
+				this.emit("base",telegram.base);
+			}
+			this.emit("response",telegram);
+		}
+	}.bind(this)
 
 	this.send = function(obj){
 		if(obj.hasOwnProperty("raw")){
@@ -91,7 +83,7 @@ function SerialPortListener(){
 	var parent=this;
 	this.Button=function (offset){
 		this.parent=parent;
-		this.head="55000707017a"
+		this.head="55000707017a";
 		this.adr=(parseInt(base,16)+offset).toString(16)
 		this.B0={
 			click:function(){
