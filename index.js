@@ -2,13 +2,19 @@ var SerialPort   = require("serialport").SerialPort;
 var EventEmitter = require('events').EventEmitter;
 var Telegram     = require("./telegram.js");
 var eep          = require("./eep.js")
+var crc          = require("./crc.js")
 
 function SerialPortListener(){
-	var serialport = null;
+	var serialPort = null;
 	var tmp        = null;
 	this.eep       = eep;
+	this.base      = null;
+	this.close = function(){
+		serialPort.close(function(err){})
+	}
 	this.listen    = function(port){
-		serialPort = new SerialPort(port,{baudrate: 57600});      
+		serialPort = new SerialPort(port,{baudrate: 57600});  
+		
 		serialPort.on("open",function(){
 			this.emit("open")
 			serialPort.on('data',function(data){
@@ -28,8 +34,15 @@ function SerialPortListener(){
 						if(buf.length == totalExpectedLength){ //if we receive the complete telegram in one go, fill the data structure with it
 							var telegram = new Telegram();
 							telegram.loadFromBuffer(buf);
-							if(telegram.packetType==1){this.emit("data",telegram);}
-							if(telegram.packetType==2){this.emit("response",telegram);}
+							this.emit("data",telegram);
+							if(telegram.packetType==2){
+								
+								if(telegram.hasOwnProperty("base")){
+									this.base=telegram.base;
+									this.emit("ready",telegram.base);
+								}
+								this.emit("response",telegram);
+							}
 						}
 					}else{
 
@@ -44,18 +57,30 @@ function SerialPortListener(){
 							if(buf.length == totalExpectedLength){ //if we receive the complete telegram , fill the data structure with it
 								var telegram = new Telegram();
 								telegram.loadFromBuffer(buf);
-								if(telegram.packetType==1){this.emit("data",telegram);}
-								if(telegram.packetType==2){this.emit("response",telegram);}
+								this.emit("data",telegram);
+								if(telegram.packetType==2){
+								
+								if(telegram.hasOwnProperty("base")){
+									this.base=telegram.base;
+									this.emit("ready",telegram.base);
+								}
+								this.emit("response",telegram);
+							}
 							}
 						}
 					}
 				}.bind(this));
+				this.getBase()
 			}.bind(this));
 		}
-	this.send = function(tel){
-		//Not yet implemented
-		var buf1 = new Buffer(tel,"hex");
-		serialPort.write(buf1);
+	this.send = function(obj){
+		if(obj.hasOwnProperty("raw")){
+			var buf1 = new Buffer(obj.raw,"hex");
+			serialPort.write(buf1);
+		}
+	}
+	this.getBase = function(){
+		this.send({raw:"5500010005700838"})
 	}
 }
 

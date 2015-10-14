@@ -19,12 +19,13 @@ module.exports=function enocean_Telegram(data){
 		this.packetType=buf[4]
 		var headerCRC=buf[5]
 		var rawDataByte=buf.slice(6,dataLength+6)
-		
-		
 		switch(this.packetType){
 			case 2:
 				this.packetTypeString="RESPONSE"
 				this.returnCode=buf[6]
+				if(dataLength==5){
+					this.base=buf.slice(7,11).toString("hex")
+				}
 				this.raw=rawDataByte
 				break;
 			case 1:
