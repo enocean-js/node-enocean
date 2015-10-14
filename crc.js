@@ -33,24 +33,10 @@ var crcTable = [
 	0xe6, 0xe1, 0xe8, 0xef, 0xfa, 0xfd, 0xf4, 0xf3
 ];
 
-module.exports= function (buf){
-	var crc=0
-	for (var i = 0 ; i < buf.length ; i++) {
+module.exports = function (buf){
+	var crc = 0;
+	for (var i = 0;i < buf.length;i++){
 		crc = crcTable[(crc ^ buf[i])];
 	}
-	return crc
+	return crc;
 }
-
-/*
-var buf=new Buffer("00010005","hex")
-var crc1=getCRC(buf).toString(16)
-var buf=new Buffer("08","hex")
-var crc2=getCRC(buf).toString(16)
-console.log(crc1,crc2)
-function getCRC(buf){
-	var crc=0
-	for (var i = 0 ; i < buf.length ; i++) {
-		crc = crcTable[(crc ^ buf[i])];
-	}
-	return crc
-}*/
