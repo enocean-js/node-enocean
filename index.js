@@ -85,7 +85,7 @@ function SerialPortListener(){
 	this.Dimmer=function (offset){
 		this.parent=parent;
 		this.head="55000a0701eb";
-		this.adr=(parseInt(base,16)+offset).toString(16)
+		this.adr=(parseInt(base,16)+parseInt(offset)).toString(16)
 		this.speed="01"
 		this.setValue=function(val){
 			var value=pad(parseInt(val).toString(16),2)
@@ -110,7 +110,7 @@ function SerialPortListener(){
 	this.Button=function (offset){
 		this.parent=parent;
 		this.head="55000707017a";
-		this.adr=(parseInt(base,16)+offset).toString(16)
+		this.adr=(parseInt(base,16)+parseInt(offset)).toString(16)
 		this.B0={
 			click:function(){
 				this.B0.down()
