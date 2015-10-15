@@ -23,7 +23,7 @@ enocean.on("data",function(data){
 ## eep
 eep stands for enocean equipment protocol. The eep defines the content of specific telegram data bytes. to know which eep a given sensor or telegram belongs to, you have to recieve a learn telegram (or specify it yourself if you know the type of device). A learn telegram conains the func and type fields. together they form the specific eep of the device.  
 if you recieve a learn telegram, the `data.eep` filed contains the recognized eep (if the sensor sends it. there are some sensors who don't). You can store this information and use it for future telegrams from the same sender.
-there is a the enocean object provides a lookup feature which you can use to extract information from a telegram with known eep. for example with
+The enocean object provides a lookup feature which you can use to extract information from a telegram with known eep. for example with
 
 ```
 enocean.eep["f5-2-14"].getValue(data)
