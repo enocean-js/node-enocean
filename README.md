@@ -32,7 +32,7 @@ enocean.eep["f5-2-14"].getValue(data)
 you can extract the value of a temperature sensor with a temperature range of -20 to +60 °C.
 
 ## sending Data
-to prevent telegram spoofing, you can not use any address as sending signature. Instead every TCM-3xx device has a base adress, and you can use 255 adresses starting with the base adress. So if your base adress is ff8abc00 you can send with senderId ff8abc00 - ff8abcff. To find out you can do `enocean.getBase()` for convienience a special event is fired as a response to getBase().
+to prevent telegram spoofing, you can not use any address as sending signature. Instead every TCM-3xx device has a base adress, and you can use 255 adresses starting with the base adress. So if your base adress is ff8abc00 you can send with senderId ff8abc00 - ff8abcff. To find out your base you can do `enocean.getBase()` for convienience a special event is fired as a response to getBase().
 
 ```
 var enocean      = require("../");  
