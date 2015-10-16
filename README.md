@@ -33,7 +33,7 @@ you can extract the value of a temperature sensor with a temperature range of -2
 
 ## sending Data
 ### getting the base address
-to prevent telegram spoofing, you can not use every random address as sending signature. Instead every TCM-3xx device has a base adress, and you can use 128 adresses starting with the base adress. So if your base adress is aabbcc00 you can send with senderId aabbcc00 - ff8abc7f. To find out your base you can do `enocean.getBase()` for convienience a special event is fired as a response to getBase().     
+to prevent telegram spoofing, you can not use every random address as sending signature. Instead every TCM-3xx device has a base adress, and you can use 128 adresses starting with the base adress. So if your base adress is aabbcc00 you can send with senderId aabbcc00 - aabbcc7f. To find out your base you can do `enocean.getBase()` for convienience a special event is fired as a response to getBase().     
 **after getting your base address, you have to store it in the config.json file**
 ```
 var enocean      = require("../");  
