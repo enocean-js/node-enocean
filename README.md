@@ -32,37 +32,25 @@ enocean.eep["f5-2-14"].getValue(data)
 you can extract the value of a temperature sensor with a temperature range of -20 to +60 °C.
 
 ## sending Data
-to prevent telegram spoofing, you can not use any address as sending signature. Instead every TCM-3xx device has a base adress, and you can use 255 adresses starting with the base adress. So if your base adress is ff8abc00 you can send with senderId ff8abc00 - ff8abcff. To find out your base you can do `enocean.getBase()` for convienience a special event is fired as a response to getBase().
-
+### getting the base address
+to prevent telegram spoofing, you can not use any address as sending signature. Instead every TCM-3xx device has a base adress, and you can use 128 adresses starting with the base adress. So if your base adress is aabbcc00 you can send with senderId aabbcc00 - ff8abc7f. To find out your base you can do `enocean.getBase()` for convienience a special event is fired as a response to getBase().
 ```
 var enocean      = require("../");  
 enocean.listen("/dev/ttyUSB0"); 
 enocean.on("ready",function(data){   
-	enocean.getBase()            
+    enocean.getBase()            
 });
 enocean.on("base",function(data){   
-	console.log(data)  
-	enocean.close()             
+    console.log(data)  
+    enocean.close()             
 });
 ```
+### actualy sending Data
+sending data can be done in raw form. just pass a string to the send function.   
+`enocean.send("5500010005700838")`
+to make it easier to send Data, there are seperate modules that implement certain EEPs. The following modules are currently available.
 
-*you must put the base adress in config.json to be able to send data.*
-If you have done so you can send button click events after the "ready" event got fired.
+* [node-enocean-button](https://github.com/Holger-Will/node-enocean-button)
+* [node-enocean-dimmer](https://github.com/Holger-Will/node-enocean-dimmer)
 
-```
-var enocean = require("../");           
-
-enocean.listen("/dev/ttyUSB0");             
-enocean.on("ready",function(base){          
-	var button = new enocean.Button(1)
-	if(process.argv[2]=="on"){
-		button.B0.click()
-	}else{
-		button.B1.click()	
-	}
-	setTimeout(function(){enocean.close()},200)
-});
-```
-A Button expects number which represents the offset to the base adress for initialization.
-Then it provides two chanals (A and B) and two buttons for each chanal (A0,A1,B0,B1). every button can be pressed (.down()) lifted (.up()) or clicked(.click()).    
-I'm currently thinking about implementing the sensors like buttons etc. in seperate modules as add-ons...
+to find out how to use them, see the examples in the example folder here or in the other modules repository.
