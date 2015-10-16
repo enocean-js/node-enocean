@@ -6,11 +6,12 @@ var crc          = require("./crc.js")
 var config          = require("./config.json")
 
 function SerialPortListener(){
-	var base=config.base;
-	var serialPort = null;
-	var tmp        = null;
-	this.eep       = eep;
-	this.base      = null;
+	var base=config.base
+	var serialPort = null
+	var tmp        = null
+	this.eep       = eep
+	this.base      = base
+	this.crc       = crc
 	this.close = function(){
 		serialPort.close(function(err){})
 	}
@@ -69,15 +70,13 @@ function SerialPortListener(){
 		}
 	}.bind(this)
 
-	this.send = function(obj){
-		if(obj.hasOwnProperty("raw")){
-			var buf1 = new Buffer(obj.raw,"hex");
+	this.send = function(msg){
+			var buf1 = new Buffer(msg,"hex");
 			serialPort.write(buf1);
-		}
 	}
 
 	this.getBase = function(){
-		this.send({raw:"5500010005700838"})
+		this.send("5500010005700838")
 	}
 
 	var parent=this;
@@ -106,75 +105,9 @@ function SerialPortListener(){
 			parent.send({raw:this.head+b1})
 		}
 	}
-
-	this.Button=function (offset){
-		this.parent=parent;
-		this.head="55000707017a";
-		this.adr=(parseInt(base,16)+parseInt(offset)).toString(16)
-		this.B0={
-			click:function(){
-				this.B0.down()
-				this.B0.up()
-			}.bind(this),
-			down:function(){
-				var b1 = "f670"+this.adr+"3001ffffffffff00";
-				b1+=crc(new Buffer(b1,"hex")).toString(16)
-				parent.send({raw:this.head+b1})
-			}.bind(this),
-			up:function(){
-				var b2 = "f600"+this.adr+"3001ffffffffff00";
-				b2+=crc(new Buffer(b2,"hex")).toString(16)
-				parent.send({raw:this.head+b2})
-			}.bind(this)
-		}
-		this.B1={
-			click:function(){
-				this.B1.down()
-				this.B1.up()
-			}.bind(this),
-			down:function(){
-				var b1 = "f650"+this.adr+"3001ffffffffff00";
-				b1+=crc(new Buffer(b1,"hex")).toString(16)
-				parent.send({raw:this.head+b1})
-			}.bind(this),
-			up:function(){
-				var b2 = "f600"+this.adr+"3001ffffffffff00";
-				b2+=crc(new Buffer(b2,"hex")).toString(16)
-				parent.send({raw:this.head+b2})
-			}.bind(this)
-		}
-		this.A0={
-			click:function(){
-				this.A0.down()
-				this.A0.up()
-			}.bind(this),
-			down:function(){
-				var b1 = "f630"+this.adr+"3001ffffffffff00";
-				b1+=crc(new Buffer(b1,"hex")).toString(16)
-				parent.send({raw:this.head+b1})
-			}.bind(this),
-			up:function(){
-				var b2 = "f600"+this.adr+"3001ffffffffff00";
-				b2+=crc(new Buffer(b2,"hex")).toString(16)
-				parent.send({raw:this.head+b2})
-			}.bind(this)
-		}
-		this.A1={
-			click:function(){
-				this.A1.down()
-				this.A1.up()
-			}.bind(this),
-			down:function(){
-				var b1 = "f610"+this.adr+"3001ffffffffff00";
-				b1+=crc(new Buffer(b1,"hex")).toString(16)
-				parent.send({raw:this.head+b1})
-			}.bind(this),
-			up:function(){
-				var b2 = "f600"+this.adr+"3001ffffffffff00";
-				b2+=crc(new Buffer(b2,"hex")).toString(16)
-				parent.send({raw:this.head+b2})
-			}.bind(this)
-		}
+	this.pad = function ( num , size) {
+    	var s = "00000000000000000000000000000000" + num;
+    	return s.substr(s.length-size);
 	}
 }
 
@@ -182,7 +115,3 @@ SerialPortListener.prototype.__proto__ = EventEmitter.prototype;
 module.exports = new SerialPortListener();
 
 
-function pad(num,size) {
-    var s = "00000000000000000000000000000000" + num;
-    return s.substr(s.length-size);
-}
