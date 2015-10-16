@@ -1,7 +1,7 @@
 # node-enocean
 an enocean implementation for node.js   
-this is still in alpha state, but we are moving slowly towards a more stable beta phase.
-instead expect everything written here to break in the future, as the interface is not fixed yet.
+this is still in alpha state, but we are moving slowly towards a more stable beta phase.    
+there may still be breaking changes before 1.0 but the interface is getting mor stable every day.
 
 ## installation
 ```
