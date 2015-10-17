@@ -4,15 +4,17 @@ var Telegram     = require("./modules/telegram.js");
 var eep          = require("./modules/eep.js")
 var crc          = require("./modules/crc.js")
 var Memory       = require("./modules/memory.js")
-var config       = require("./config.json")
+var base         = "00000000"
 
 function SerialPortListener(config){
-	var base=config.base
+	var configFile = config.hasOwnProperty("configFile")? config.configFile : "./config.json"
+	var config       = require(configFile)
 	var serialPort = null
 	var tmp        = null
 	this.eep       = eep
-	this.base      = base
+	this.base      = config.base
 	this.crc       = crc
+
 	this.close = function(){
 		serialPort.close(function(err){})
 	}
