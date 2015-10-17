@@ -6,7 +6,7 @@ var crc          = require("./modules/crc.js")
 var Memory       = require("./modules/memory.js")
 var config       = require("./config.json")
 
-function SerialPortListener(){
+function SerialPortListener(config){
 	var base=config.base
 	var serialPort = null
 	var tmp        = null
@@ -22,7 +22,6 @@ function SerialPortListener(){
 		serialPort.on("open",function(){
 			this.mem = new Memory(this)
 			this.emit("ready");
-			
 			serialPort.on('data',function(data){
 				var buf = new Buffer(data);
 
@@ -89,6 +88,9 @@ function SerialPortListener(){
 }
 
 SerialPortListener.prototype.__proto__ = EventEmitter.prototype;	
-module.exports = new SerialPortListener();
+module.exports = function(config){
+	if(config==undefined) config={}
+	return new SerialPortListener(config);
+	}
 
 
