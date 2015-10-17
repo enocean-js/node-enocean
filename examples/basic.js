@@ -1,4 +1,4 @@
-var enocean      = require("../");  // require node-enocen
+var enocean      = require("../")();  // require node-enocen
 // start listening on the serialport 
 // if you use the enocean pi on a raspberry pi use:
 // enocean.listen("/dev/ttyUSB0")
