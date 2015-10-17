@@ -18,6 +18,7 @@ enocean.on("data",function(data){
 	console.log(data) 
 });
 ```
+
 to only listen for known sensor data, use
 
 ```
@@ -34,10 +35,23 @@ enocean.on("learn",function(data){
 	console.log(data) 
 });
 ```
+
+see the example `memory.js` in the examples folder for more info.
+
 the learning phase stops after a confugurable timeout. the default is 60 seconds.
 during runtime you can change this timeout with `enocean.timeout=30`
 
-you can extract the value of a temperature sensor with a temperature range of -20 to +60 °C.
+you can also change a learned sensor or add a new one by hand.
+
+```
+enocean.learn({
+		id:"aabbccdd",
+		eep: "f6-02-03",
+		desc:"Switch",
+		manufacturer:"Enocean GmbH"
+	})
+```
+alternatvely you can also hand edit the knownSensors.json file. By default its located at `./modules/knownSensors.json`.
 
 ## sending Data
 
@@ -54,3 +68,7 @@ to make it easier to send Data, there are seperate modules that implement certai
 * [node-enocean-dimmer](https://github.com/Holger-Will/node-enocean-dimmer)
 
 to find out how to use them, see the examples in the example folder here or in the other modules repository.
+
+## changing the sensor file
+
+the learned sensors are saved in 
