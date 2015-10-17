@@ -99,7 +99,7 @@ function SerialPortListener(config){
 		 // somtimes the controler does not returen the base address. 
 		 // if the address is not know, this may cause the program to hang (ie. not fire the "ready" event)
 		 // to fix this, see if the ready event got fired after 1 second, if not fire request the base addres again. 
-		 // usually this works. 
+		 // this is a dirty hack i know... so what, it works ;-)
 		setTimeout(function(){
 			if(state!=="ready") this.send("5500010005700838") 
 		}.bind(this),1000)
