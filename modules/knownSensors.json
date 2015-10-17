@@ -1,14 +1,1 @@
-{
-    "002a1d44": {
-        "id": "002a1d44",
-        "eep": "f6-02-03",
-        "manufacturer": "unknown",
-        "desc": "RPS switch"
-    },
-    "00864f8e": {
-        "id": "00864f8e",
-        "eep": "f6-02-03",
-        "manufacturer": "unknown",
-        "desc": "RPS switch"
-    }
-}
+{}
