@@ -4,16 +4,17 @@ var Telegram     = require("./modules/telegram.js");
 var eep          = require("./modules/eep.js")
 var crc          = require("./modules/crc.js")
 var Memory       = require("./modules/memory.js")
-var base         = "00000000"
+var fs           = require("fs")
 
 function SerialPortListener(config){
-	var configFile = config.hasOwnProperty("configFile")? config.configFile : "./config.json"
-	var config       = require(configFile)
+	var configFile = require(config.configFilePath)
 	var serialPort = null
 	var tmp        = null
 	this.eep       = eep
-	this.base      = config.base
+	this.base      = configFile.base
 	this.crc       = crc
+	var state = ""
+
 
 	this.close = function(){
 		serialPort.close(function(err){})
@@ -22,8 +23,14 @@ function SerialPortListener(config){
 		serialPort = new SerialPort(port,{baudrate: 57600});  
 		
 		serialPort.on("open",function(){
-			this.mem = new Memory(this)
-			this.emit("ready");
+			this.mem = new Memory(this,config)
+			if(configFile.base==="00000000" || !configFile.hasOwnProperty("base")){
+				this.getBase()
+			}else{
+				state = "ready"
+				this.emit("ready");
+			}
+			
 			serialPort.on('data',function(data){
 				var buf = new Buffer(data);
 
@@ -67,8 +74,16 @@ function SerialPortListener(config){
 		if(telegram.packetType==2){
 			if(telegram.hasOwnProperty("base")){
 				this.base=telegram.base;
-				base=this.base;
-				this.emit("base",telegram.base);
+				configFile.base=telegram.base;
+				fs.writeFile(config.configFilePath, JSON.stringify(configFile, null, 4), function(err) {
+    				if(err) {
+      
+    				} else {
+    					state = "ready"
+    					this.emit("ready");
+    					this.emit("base",telegram.base);
+   			 		}
+				}.bind(this))	
 			}
 			this.emit("response",telegram);
 		}
@@ -81,6 +96,13 @@ function SerialPortListener(config){
 
 	this.getBase = function(){
 		this.send("5500010005700838")
+		 // somtimes the controler does not returen the base address. 
+		 // if the address is not know, this may cause the program to hang (ie. not fire the "ready" event)
+		 // to fix this, see if the ready event got fired after 1 second, if not fire request the base addres again. 
+		 // usually this works. 
+		setTimeout(function(){
+			if(state!=="ready") this.send("5500010005700838") 
+		}.bind(this),1000)
 	}
 
 	this.pad = function ( num , size) {
@@ -89,9 +111,13 @@ function SerialPortListener(config){
 	}
 }
 
+
+
+
 SerialPortListener.prototype.__proto__ = EventEmitter.prototype;	
 module.exports = function(config){
-	if(config==undefined) config={}
+	// TODO: if only some of the values are in config fill in with defaultes
+	if(config==undefined) config={configFilePath:__dirname + "/config.json",sensorFilePath:__dirname + "/modules/knownSensors.json",timeout:60}
 	return new SerialPortListener(config);
 	}
 
