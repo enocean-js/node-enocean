@@ -10,6 +10,13 @@
     "type": "git",
     "url": "https://github.com/Holger-Will/node-enocean.git"
   },
+  "keywords": [
+    "enocean",
+    "eep",
+    "iot",
+    "home automation",
+    "internet of things"
+  ],
   "author": "Holger Will",
   "license": "ISC",
   "dependencies": {
