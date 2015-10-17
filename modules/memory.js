@@ -4,7 +4,7 @@ var knownSensors = require("./knownSensors.json")
 module.exports=function(app,config){
 	if(config==undefined) config={}
 	var outFile = config.hasOwnProperty("sensorFilePath") ? config.sensorFilePath : __dirname + '/knownSensors.json'
-	var timeout= config.hasOwnProperty("timeout") ? config.timeout : 10
+	app.timeout= config.hasOwnProperty("timeout") ? config.timeout : 10
 	app.learnMode = "off"
 	app.on("data",function(data){
 		if (knownSensors.hasOwnProperty(data.senderId)) {
@@ -34,7 +34,7 @@ module.exports=function(app,config){
 					}
 				}
 			} else {
-				if(data.choice==="f6"){
+				if(data.choice==="f6" && app.learnMode==="on"){
 					app.learn({
 						id:data.senderId,
 						eep:"f6-02-03",
@@ -50,7 +50,7 @@ module.exports=function(app,config){
 	app.startLearning=function(){
 		app.learnMode="on"
 		app.emit("learn-mode-start")
-		setTimeout(app.stopLearning,timeout*1000)
+		setTimeout(app.stopLearning,app.timeout*1000)
 	}
 	app.stopLearning=function(){
 		if(app.learnMode=="on"){
