@@ -10,7 +10,8 @@ module.exports=function(app,config){
 		if (knownSensors.hasOwnProperty(data.senderId)) {
 			if(data.learnBit===1 || data.choice==="f6"){
 				var sensor=knownSensors[data.senderId]
-				app.emit("known-data",data)
+				sensor.data=data
+				app.emit("known-data",sensor)
 			} else {
 				if(app.learnMode==="on"){
 					app.learnMode="off"
@@ -18,7 +19,7 @@ module.exports=function(app,config){
 				}
 			}
 		} else {
-			if(data.learnBit===0 || data.choice==="f6"){
+			if(data.learnBit===0){
 				if(app.learnMode=="on"){
 					app.learn({
 						id:data.senderId,
@@ -26,7 +27,6 @@ module.exports=function(app,config){
 						manufacturer:data.manufacturer,
 						desc:"new sensor"
 					})
-	
 				} else {
 					// log the learn telegram for manual tech in
 					if(data.choice!="f6"){
@@ -34,8 +34,16 @@ module.exports=function(app,config){
 					}
 				}
 			} else {
-				// the sensor is not known, but its also not a tech in, so we can not know anthing about this senser just emit a usual event for downstream handlers
-				app.emit("unknown-data",data)
+				if(data.choice==="f6"){
+					app.learn({
+						id:data.senderId,
+						eep:"f6-02-03",
+						manufacturer:"unknown",
+						desc:"RPS switch"
+					})
+				}else{
+						app.emit("unknown-data",data)
+				}
 			}
 		}
 	})
