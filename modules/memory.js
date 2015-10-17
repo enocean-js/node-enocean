@@ -1,15 +1,16 @@
 var fs = require("fs")
 var knownSensors = require("./knownSensors.json")
+
 module.exports=function(app,config){
 	if(config==undefined) config={}
-	var outFile = config.hasOwnProperty("outFile") ? config.outFile : __dirname + '/knownSensors.json'
+	var outFile = config.hasOwnProperty("sensorFile") ? config.outFile : __dirname + '/knownSensors.json'
 	var timeout= config.hasOwnProperty("timeout") ? config.timeout : 10
 	app.learnMode = "off"
 	app.on("data",function(data){
 		if (knownSensors.hasOwnProperty(data.senderId)) {
-			if(data.learnBit===1){
-				//do somthing usefull
-				app.emit("known-data",knownSensors[data.senderId])
+			if(data.learnBit===1 || data.choice==="f6"){
+				var sensor=knownSensors[data.senderId]
+				app.emit("known-data",data)
 			} else {
 				if(app.learnMode==="on"){
 					app.learnMode="off"
@@ -17,7 +18,7 @@ module.exports=function(app,config){
 				}
 			}
 		} else {
-			if(data.learnBit==0){
+			if(data.learnBit===0 || data.choice==="f6"){
 				if(app.learnMode=="on"){
 					app.learn({
 						id:data.senderId,
@@ -28,11 +29,13 @@ module.exports=function(app,config){
 	
 				} else {
 					// log the learn telegram for manual tech in
-					app.emit("unknown-teach-in",data)
+					if(data.choice!="f6"){
+						app.emit("unknown-teach-in",data)
+					}
 				}
 			} else {
 				// the sensor is not known, but its also not a tech in, so we can not know anthing about this senser just emit a usual event for downstream handlers
-				app.emit("unknown-data")
+				app.emit("unknown-data",data)
 			}
 		}
 	})
@@ -42,8 +45,10 @@ module.exports=function(app,config){
 		setTimeout(app.stopLearning,timeout*1000)
 	}
 	app.stopLearning=function(){
-		app.learnMode="off"
-		app.emit("learn-mode-stop",{reason:"timeout"})
+		if(app.learnMode=="on"){
+			app.learnMode="off"
+			app.emit("learn-mode-stop",{reason:"timeout"})
+		}
 	}
 	app.learn = function(sensor){
 		knownSensors[sensor.id]=sensor
