@@ -43,7 +43,7 @@ module.exports=function enocean_Telegram(data){
 					}
 					break;
 					case "f6":
-						this.raw=buf[7].toString(16)
+						this.raw = buf[7].toString(16)
 						if(this.raw==50){
 							this.eep="f6-2-3"
 							this.button="B1"
@@ -61,7 +61,8 @@ module.exports=function enocean_Telegram(data){
 						this.packetTypeString="RPS"
 					break;
 					case "d5":
-					this.packetTypeString="1BS"
+						this.raw = buf[7].toString(16)
+						this.packetTypeString="1BS"
 					break;	
 				}
 			break;

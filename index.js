@@ -1,9 +1,10 @@
 var SerialPort   = require("serialport").SerialPort;
 var EventEmitter = require('events').EventEmitter;
-var Telegram     = require("./telegram.js");
-var eep          = require("./eep.js")
-var crc          = require("./crc.js")
-var config          = require("./config.json")
+var Telegram     = require("./modules/telegram.js");
+var eep          = require("./modules/eep.js")
+var crc          = require("./modules/crc.js")
+var Memory       = require("./modules/memory.js")
+var config       = require("./config.json")
 
 function SerialPortListener(){
 	var base=config.base
@@ -19,7 +20,9 @@ function SerialPortListener(){
 		serialPort = new SerialPort(port,{baudrate: 57600});  
 		
 		serialPort.on("open",function(){
+			this.mem = new Memory(this)
 			this.emit("ready");
+			
 			serialPort.on('data',function(data){
 				var buf = new Buffer(data);
 
@@ -33,8 +36,8 @@ function SerialPortListener(){
 
 //there is still the remote chance that we receive the starbyte, but not the complete header. TODO: find out how to handle these cases
 
-						tmp=data;
-						if(buf.length == totalExpectedLength){ //if we receive the complete telegram in one go, fill the data structure with it
+						tmp = data;
+						if(buf.length == totalExpectedLength) { //if we receive the complete telegram in one go, fill the data structure with it
 							this.receive(buf);
 						}
 					}else{
@@ -79,32 +82,6 @@ function SerialPortListener(){
 		this.send("5500010005700838")
 	}
 
-	var parent=this;
-
-	this.Dimmer=function (offset){
-		this.parent=parent;
-		this.head="55000a0701eb";
-		this.adr=(parseInt(base,16)+parseInt(offset)).toString(16)
-		this.speed="01"
-		this.setValue=function(val){
-			var value=pad(parseInt(val).toString(16),2)
-			console.log(value)
-			var b1="a502"+value+this.speed+"09"+this.adr+"3001ffffffffff00";
-			b1+=pad(crc(new Buffer(b1,"hex")).toString(16),2)
-			parent.send({raw:this.head+b1})
-		}
-		this.teach=function(){
-			var b1="a502000000"+this.adr+"3001ffffffffff00";
-			b1+=pad(crc(new Buffer(b1,"hex")).toString(16),2)
-			parent.send({raw:this.head+b1})
-		}
-		this.off=function(){
-			var b1="a502000008"+this.adr+"3001ffffffffff00";
-			b1+=pad(crc(new Buffer(b1,"hex")).toString(16),2)
-			console.log(b1)
-			parent.send({raw:this.head+b1})
-		}
-	}
 	this.pad = function ( num , size) {
     	var s = "00000000000000000000000000000000" + num;
     	return s.substr(s.length-size);
