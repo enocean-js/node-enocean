@@ -1,4 +1,4 @@
-var enocean      = require("../");           // require node-enocean
+var enocean      = require("../")();           // require node-enocean
 var Dimmer      = require("../node_modules/node-enocean-dimmer"); 
 enocean.listen("/dev/ttyUSB0");              // open the serialport
 
