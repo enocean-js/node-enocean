@@ -3,7 +3,12 @@ an enocean implementation for node.js
 this is still in beta but the interface is somewhat stable now.    
 there may still be breaking changes before 1.0.
 
-### changelog 0.6.0
+### changelog 0.7.0 
+
+* implementation event emitter hook.
+* bug fixes
+
+### changelog 0.6.0 
 
 * implementation of eep resolvers.
 * bug fixes
