@@ -1,3 +1,3 @@
 var enocean      = require("../")();  // require node-enocen
 
-console.log(enocean.getData("a5-02-20","ff027208"))
+console.log(enocean.getData("a5-04-03","8003f001"))
