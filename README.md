@@ -79,7 +79,8 @@ the enocean object has a property called `.eepResolvers`. This is an array which
 * f6-03-02
 * a5-02-xx
 * a5-04-xx
-* a5-05-01
+* a5-05-xx
+* a5-06-01
 
 more to come...   
 
