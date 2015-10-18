@@ -3,7 +3,7 @@ an enocean implementation for node.js
 this is still in beta but the interface is somewhat stable now.    
 there may still be breaking changes before 1.0.
 
-### cangelog 0.6.0
+### changelog 0.6.0
 
 * implementation of eep resolvers.
 * bug fixes
