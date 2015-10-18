@@ -32,22 +32,23 @@ module.exports=function enocean_Telegram(data){
 				switch(this.choice){
 					case "a5":
 					this.packetTypeString="4BS"
-					this.raw=parseInt(buf.slice(7,11).toString("hex"),16)
+					this.raw=pad(buf.slice(7,11).toString("hex"),8)
+					var rawNr=parseInt(buf.slice(7,11).toString("hex"),16)
 					this.learnBit=(this.raw & 8)>>3 // Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
 					if(this.learnBit==0){
-						var func=((parseInt("11111100000000000000000000000000",2) & this.raw)>>>26).toString(16);
-						var type=((parseInt("00000011111110000000000000000000",2) & this.raw)>>>19).toString(16);
+						var func=((parseInt("11111100000000000000000000000000",2) & rawNr)>>>26).toString(16);
+						var type=((parseInt("00000011111110000000000000000000",2) & rawNr)>>>19).toString(16);
 						this.eep="a5-"+pad(func,2)+"-"+pad(type,2);
-						var MANUFACTURERID=(parseInt("00000000000001111111111100000000",2) & this.raw)>>>8;
+						var MANUFACTURERID=(parseInt("00000000000001111111111100000000",2) & rawNr)>>>8;
 						this.manufacturer=Manufacturer_List[MANUFACTURERID]
 					}
 					break;
 					case "f6":
-						this.raw = buf[7].toString(16)
+						this.raw = pad(buf[7].toString(16),2)
 						this.packetTypeString="RPS"
 					break;
 					case "d5":
-						this.raw = buf[7].toString(16)
+						this.raw = pad(buf[7].toString(16),2)
 						this.packetTypeString="1BS"
 					break;	
 				}
