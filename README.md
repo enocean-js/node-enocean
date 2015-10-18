@@ -3,6 +3,11 @@ an enocean implementation for node.js
 this is still in beta but the interface is somewhat stable now.    
 there may still be breaking changes before 1.0.
 
+### cangelog 0.6.0
+
+* implementation of eep resolvers.
+* bug fixes
+
 ## installation
 ```
 npm install node-enocean
@@ -59,6 +64,35 @@ enocean.learn({
 ### teach in by editing the knownSensor File
 
 alternatvely you can also hand edit the knownSensors.json file. By default its located at `./modules/knownSensors.json`.
+
+### EEP Resolvers
+
+the enocean object has a property called `.eepResolvers`. This is an array which holds functions that can handle specific EEPs. When a known Sensor is received, the eep is determined form the sensorFile. Then the Databytes of the telegram are passed to each resolver function one after the other until one of the returne somthing other than `null`. The build in resolvers implement the following eep
+
+* a5-02-xx
+* a5-04-xx
+
+more to come...   
+
+you can easily implement your own eep handler, by adding a function to the .eepResolver array.
+
+```
+var enocean      = require("../")();  // require node-enocen
+enocean.eepResolvers.push(function(eep,data){
+	if(eep==="a5-99-99") {
+		return {
+			type:"custom",value:"Hello World!"
+		}
+	}
+	return null
+})
+```
+
+you can test you implementation by calling `enocean.getData` with your implemented eep and some testdata.
+
+```
+console.log(enocean.getData("a5-99-99","8003f001"))
+```
 
 ## sending Data
 
