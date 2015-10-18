@@ -13,6 +13,7 @@ module.exports=function(app,config){
 				var sensor=knownSensors[data.senderId]
 				data.sensor=sensor
 				app.emit("known-data",data)
+				app.getData(sensor.eep,data.raw)
 			} else {
 				if(app.learnMode==="on"){
 					app.learnMode="off"
