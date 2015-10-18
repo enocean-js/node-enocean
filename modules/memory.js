@@ -12,12 +12,16 @@ module.exports=function(app,config){
 			if(data.learnBit===1 || data.choice==="f6"){
 				var sensor=knownSensors[data.senderId]
 				data.sensor=sensor
-				app.emit("known-data",data)
-				app.getData(sensor.eep,data.raw)
+				var da=app.getData(sensor.eep,data.raw)
+				app.emitters.forEach(function(emitter){
+					emitter.emit("known-data",data)
+				})	
 			} else {
 				if(app.learnMode==="on"){
 					app.learnMode="off"
-					app.emit("learn-mode-stop",{reason:"already know sensor"})
+					app.emitters.forEach(function(emitter){
+						emitter.emit("learn-mode-stop",{reason:"already know sensor"})
+					})
 				}
 			}
 		} else {
@@ -32,7 +36,9 @@ module.exports=function(app,config){
 				} else {
 					// log the learn telegram for manual tech in
 					if(data.choice!="f6"){
-						app.emit("unknown-teach-in",data)
+						app.emitters.forEach(function(emitter){
+							emitter.emit("unknown-teach-in",data)
+						})	
 					}
 				}
 			} else {
@@ -44,20 +50,27 @@ module.exports=function(app,config){
 						desc:"RPS switch"
 					})
 				}else{
-						app.emit("unknown-data",data)
+					app.emitters.forEach(function(emitter){
+						emitter.emit("unknown-data",data)
+					})	
+						
 				}
 			}
 		}
 	})
 	app.startLearning=function(){
 		app.learnMode="on"
-		app.emit("learn-mode-start")
+		app.emitters.forEach(function(emitter){
+			emitter.emit("learn-mode-start",{timeout:app.timeout})
+		})	
 		setTimeout(app.stopLearning,app.timeout*1000)
 	}
 	app.stopLearning=function(){
 		if(app.learnMode=="on"){
 			app.learnMode="off"
-			app.emit("learn-mode-stop",{reason:"timeout"})
+			app.emitters.forEach(function(emitter){
+				emitter.emit("learn-mode-stop",{reason:"timeout"})
+			})
 		}
 	}
 	app.learn = function(sensor){
@@ -67,8 +80,10 @@ module.exports=function(app,config){
       			//console.log(err);
     		} else {
     			app.learnMode="off"
-      			app.emit("learn",sensor)
-      			app.emit("learn-mode-stop",{reason:"success"})
+    			app.emitters.forEach(function(emitter){
+					emitter.emit("learn",sensor)
+      				emitter.emit("learn-mode-stop",{reason:"success"})
+				})
    			 }
 		})
 	}
@@ -82,8 +97,10 @@ module.exports=function(app,config){
     		if(err) {
       			//console.log(err);
     		} else {
-
-      			app.emit("forget",tmp)
+				app.emitters.forEach(function(emitter){
+					emitter.emit("forget",tmp)
+				})
+      			
    			 }
 		})
 	}

@@ -34,7 +34,7 @@ module.exports=function enocean_Telegram(data){
 					this.packetTypeString="4BS"
 					this.raw=pad(buf.slice(7,11).toString("hex"),8)
 					var rawNr=parseInt(buf.slice(7,11).toString("hex"),16)
-					this.learnBit=(this.raw & 8)>>3 // Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
+					this.learnBit=(rawNr & 8)>>3 // Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
 					if(this.learnBit==0){
 						var func=((parseInt("11111100000000000000000000000000",2) & rawNr)>>>26).toString(16);
 						var type=((parseInt("00000011111110000000000000000000",2) & rawNr)>>>19).toString(16);
@@ -49,7 +49,9 @@ module.exports=function enocean_Telegram(data){
 					break;
 					case "d5":
 						this.raw = pad(buf[7].toString(16),2)
+						this.learnBit=(parseInt(this.raw,16) & 8)>>3
 						this.packetTypeString="1BS"
+
 					break;	
 				}
 			break;

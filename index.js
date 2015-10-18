@@ -13,6 +13,7 @@ function SerialPortListener(config){
 	this.crc          = crc
 	var state         = "" //part of the getBase Hack
 	this.eepResolvers = require("./modules/eep.js")
+	this.emitters     = [this]
 
 	this.close = function(){
 		serialPort.close(function(err){})
@@ -68,7 +69,10 @@ function SerialPortListener(config){
 	this.receive=function(buf){
 		var telegram = new Telegram();
 		telegram.loadFromBuffer(buf);
-		this.emit("data",telegram);
+		this.emitters.forEach(function(emitter){
+			emitter.emit("data",telegram);
+		})	
+		
 		if(telegram.packetType==2){
 			if(telegram.hasOwnProperty("base")){
 				this.base=telegram.base;
