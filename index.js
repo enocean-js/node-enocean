@@ -7,14 +7,13 @@ var Memory       = require("./modules/memory.js")
 var fs           = require("fs")
 
 function SerialPortListener(config){
-	var configFile = require(config.configFilePath)
-	var serialPort = null
-	var tmp        = null
-	this.eep       = eep
-	this.base      = configFile.base
-	this.crc       = crc
-	var state = ""
-
+	var configFile    = require(config.configFilePath)
+	var serialPort    = null
+	var tmp           = null
+	this.base         = configFile.base
+	this.crc          = crc
+	var state         = "" //part of the getBase Hack
+	this.eepResolvers = [new eep(this)]
 
 	this.close = function(){
 		serialPort.close(function(err){})
@@ -27,7 +26,7 @@ function SerialPortListener(config){
 			if(configFile.base==="00000000" || !configFile.hasOwnProperty("base")){
 				this.getBase()
 			}else{
-				state = "ready"
+				state = "ready" // part of the getBase Hack
 				this.emit("ready");
 			}
 			
@@ -103,6 +102,14 @@ function SerialPortListener(config){
 		setTimeout(function(){
 			if(state!=="ready") this.send("5500010005700838") 
 		}.bind(this),1000)
+	}
+
+	this.getData = function(eep,data){
+		var ret
+		this.eepResolvers.forEach(function(resolver){
+			 ret = resolver.getData(eep,data)
+		}.bind(this))
+		return ret
 	}
 
 	this.pad = function ( num , size) {
