@@ -10,8 +10,8 @@ module.exports=function(app,config){
 		if (knownSensors.hasOwnProperty(data.senderId)) {
 			if(data.learnBit===1 || data.choice==="f6"){
 				var sensor=knownSensors[data.senderId]
-				sensor.data=data
-				app.emit("known-data",sensor)
+				data.sensor=sensor
+				app.emit("known-data",data)
 			} else {
 				if(app.learnMode==="on"){
 					app.learnMode="off"
