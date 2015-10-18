@@ -106,7 +106,7 @@ function SerialPortListener(config){
 	this.getData = function(eep,data){
 		var ret = null
 		for(var i=0;i<this.eepResolvers.length;i++){
-			 ret = (new this.eepResolvers[i](this)).getData(eep,data)
+			 ret = this.eepResolvers[i](eep,data)
 			 if(ret!=null) {
 			 	return ret
 			 }
