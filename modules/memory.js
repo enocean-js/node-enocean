@@ -13,6 +13,7 @@ module.exports=function(app,config){
 				var sensor=knownSensors[data.senderId]
 				data.sensor=sensor
 				var da=app.getData(sensor.eep,data.raw)
+				data.values=da
 				app.emitters.forEach(function(emitter){
 					emitter.emit("known-data",data)
 				})	
