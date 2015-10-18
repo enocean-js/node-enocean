@@ -6,7 +6,7 @@ module.exports=function(eep,data){
 	var type=eepa[2]
 	var typeNr=parseInt(type,16)
 	if(eep=="a5-05-01"){
-		rawVal = ((parseInt(data,16) & 0x3ff0000)>>16)
+		rawVal = ((parseInt(data,16) & 0x3ff0000)>>>16)
 		var Smin       = sensors[type].tmin
 		var Smax       = sensors[type].tmax
 		var val1    = ((Smax-Smin)/1023)*(rawVal)+Smin
