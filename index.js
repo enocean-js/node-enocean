@@ -1,7 +1,6 @@
 var SerialPort   = require("serialport").SerialPort;
 var EventEmitter = require('events').EventEmitter;
 var Telegram     = require("./modules/telegram.js");
-var eep          = require("./modules/eep.js")
 var crc          = require("./modules/crc.js")
 var Memory       = require("./modules/memory.js")
 var fs           = require("fs")
@@ -13,7 +12,7 @@ function SerialPortListener(config){
 	this.base         = configFile.base
 	this.crc          = crc
 	var state         = "" //part of the getBase Hack
-	this.eepResolvers = [new eep(this)]
+	this.eepResolvers = require("./modules/eep.js")
 
 	this.close = function(){
 		serialPort.close(function(err){})
@@ -105,10 +104,13 @@ function SerialPortListener(config){
 	}
 
 	this.getData = function(eep,data){
-		var ret
-		this.eepResolvers.forEach(function(resolver){
-			 ret = resolver.getData(eep,data)
-		}.bind(this))
+		var ret = null
+		for(var i=0;i<this.eepResolvers.length;i++){
+			 ret = (new this.eepResolvers[i](this)).getData(eep,data)
+			 if(ret!=null) {
+			 	return ret
+			 }
+		}
 		return ret
 	}
 
