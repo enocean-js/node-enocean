@@ -1,6 +1,11 @@
 # node-enocean
 an enocean implementation for node.js   
 there may still be breaking changes before 1.0.
+### changelog 0.7.7
+
+* integrated mocha testing
+* implemented a5-11-02
+* fixes...
 
 ### changelog 0.7.0 
 
@@ -78,6 +83,7 @@ the enocean object has a property called `.eepResolvers`. This is an array which
 * a5-04-xx
 * a5-05-xx
 * a5-06-01
+* a5-11-02
 
 more to come...   
 
