@@ -6,5 +6,6 @@ eep.push(require("./eep/eep-a5-04-xx.js"))
 eep.push(require("./eep/eep-a5-04-10bit.js"))
 eep.push(require("./eep/eep-a5-05-01.js"))
 eep.push(require("./eep/eep-a5-06-01.js"))
+eep.push(require("./eep/eep-a5-11-02.js"))
 
 module.exports=eep
