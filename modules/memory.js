@@ -4,7 +4,6 @@ var knownSensors = ""
 module.exports=function(app,config){
 	if(config==undefined) config={}
 	var outFile = config.hasOwnProperty("sensorFilePath") ? config.sensorFilePath : __dirname + '/knownSensors.json'
-	app.timeout= config.hasOwnProperty("timeout") ? config.timeout : 10
 	knownSensors = require(outFile)
 	app.learnMode = "off"
 	app.on("data",function(data){

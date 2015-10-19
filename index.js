@@ -6,7 +6,12 @@ var Memory       = require("./modules/memory.js")
 var fs           = require("fs")
 
 function SerialPortListener(config){
-	var configFile    = require(config.configFilePath)
+	this.timeout      = config.timeout ? config.timeout : 60
+	this.configFilePath = config.configFilePath ? config.configFilePath : __dirname + "/config.json"
+	this.sensorFilePath = config.sensorFilePath ? config.sensorFilePath : __dirname + "/modules/knownSensors.json"
+
+	var configFile    = require(this.configFilePath)
+	
 	var serialPort    = null
 	var tmp           = null
 	this.base         = configFile.base
@@ -22,7 +27,7 @@ function SerialPortListener(config){
 		serialPort = new SerialPort(port,{baudrate: 57600});  
 		
 		serialPort.on("open",function(){
-			this.mem = new Memory(this,config)
+			this.mem = new Memory(this,{sensorFilePath:this.sensorFilePath})
 			if(configFile.base==="00000000" || !configFile.hasOwnProperty("base")){
 				this.getBase()
 			}else{
@@ -77,9 +82,9 @@ function SerialPortListener(config){
 			if(telegram.hasOwnProperty("base")){
 				this.base=telegram.base;
 				configFile.base=telegram.base;
-				fs.writeFile(config.configFilePath, JSON.stringify(configFile, null, 4), function(err) {
+				fs.writeFile(this.configFilePath, JSON.stringify(configFile, null, 4), function(err) {
     				if(err) {
-      
+
     				} else {
     					state = "ready"
     					this.emit("ready");
@@ -92,8 +97,12 @@ function SerialPortListener(config){
 	}.bind(this)
 
 	this.send = function(msg){
+		try{
 			var buf1 = new Buffer(msg,"hex");
 			serialPort.write(buf1);
+		}catch(err){
+
+		}	
 	}
 
 	this.getBase = function(){
@@ -130,7 +139,7 @@ function SerialPortListener(config){
 SerialPortListener.prototype.__proto__ = EventEmitter.prototype;	
 module.exports = function(config){
 	// TODO: if only some of the values are in config fill in with defaultes
-	if(config==undefined) config={configFilePath:__dirname + "/config.json",sensorFilePath:__dirname + "/modules/knownSensors.json",timeout:60}
+	if(config==undefined) config={}
 	return new SerialPortListener(config);
 	}
 
