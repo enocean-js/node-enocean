@@ -1,8 +1,5 @@
 # node-enocean
 an enocean implementation for node.js   
-I would say that this is allmost feature complete. 
-Now it must be tested extensively. I will add in some testing framework like mocha, but havn't decidet wich one yet. For 1.0 i will add more eep resolvers.
-
 there may still be breaking changes before 1.0.
 
 ### changelog 0.7.0 
