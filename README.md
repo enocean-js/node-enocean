@@ -5,7 +5,7 @@ an enocean implementation for node.js
 
 [Wikipedia](https://en.wikipedia.org/wiki/EnOcean)
 
-whats new in the latest version can be found in the [Changelog](https://github.com/Holger-Will/node-enocean/wiki/Changelog)
+to find out whats new in the latest version see the [Changelog](https://github.com/Holger-Will/node-enocean/wiki/Changelog)
 
 ## installation
 ```
