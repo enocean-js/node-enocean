@@ -93,6 +93,15 @@ describe('enocean', function() {
       })
     });
 
+    it('should connect to the first possible port, if no port is provided', function (done) {
+      eno=en(testConfig)
+      eno.listen()
+      eno.on("ready",function(data){
+      	done();
+      	eno.close()
+      })
+    });
+
   	it('should be able to send strings', function () {
     	assert.doesNotThrow(function(){eno.send("00")})
   	});
