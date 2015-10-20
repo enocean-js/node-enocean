@@ -23,16 +23,37 @@ function SerialPortListener(config){
 	this.close = function(){
 		serialPort.close(function(err){})
 	}
+
 	this.listen    = function(port){
-		serialPort = new SerialPort(port,{baudrate: 57600});  
-		
+		//if port is not provided try to connect to the most usual ports. uses the first port it can connect to...
+		if(!port){
+			var port=new Promise(function(resolve, reject) { 
+				var ports=["COM1","COM2","COM3","COM4","COM5","COM6","/dev/ttyAMA0","/dev/ttyAMA1","/dev/ttyAMA2","/dev/ttyAMA3","/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyUSB4","/dev/ttyUSB5"]
+				function tryports(index){
+					if(index>=ports.length) reject()
+					var sp = new SerialPort (ports[index],{baudrate: 57600},false)
+					sp.on("error",function(){tryports(index+=1)})
+					sp.on("open",function(){serialPort.close();resolve(ports[index])})
+					sp.open()
+				}	
+				tryports(0)
+			});
+			port.then(function(val){
+				serialPort = new SerialPort(val,{baudrate: 57600});
+			})
+		}else{
+			// if port is provided use the  provided one
+			serialPort = new SerialPort(port,{baudrate: 57600});  
+		}
 		serialPort.on("open",function(){
 			this.mem = new Memory(this,{sensorFilePath:this.sensorFilePath})
 			if(configFile.base==="00000000" || !configFile.hasOwnProperty("base")){
 				this.getBase()
 			}else{
 				state = "ready" // part of the getBase Hack
-				this.emit("ready");
+				this.emitters.forEach(function(emitter){
+					emitter.emit("ready");
+				})
 			}
 			
 			serialPort.on('data',function(data){
@@ -87,12 +108,17 @@ function SerialPortListener(config){
 
     				} else {
     					state = "ready"
-    					this.emit("ready");
-    					this.emit("base",telegram.base);
+    					this.emitters.forEach(function(emitter){
+							emitter.emit("ready");
+    						emitter.emit("base",telegram.base);
+						})
+    					
    			 		}
 				}.bind(this))	
 			}
-			this.emit("response",telegram);
+			this.emitters.forEach(function(emitter){
+				this.emit("response",telegram);
+			})
 		}
 	}.bind(this)
 
