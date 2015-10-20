@@ -71,14 +71,26 @@ describe('enocean', function() {
 
 
     it('should fire a "data" event when receiving a package', function (done) {
-      eno.on("data",function(){done();eno.close()})
-      eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2",16))
+      eno.on("data",function(data){
+      	assert.equal(data.senderId,"0006d1a6");
+      	done();eno.close()
+      })
+      eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2","hex"))
     });
 
-    it('should fire a "data" event when receiving a package', function (done) {
+    it('should know the content of a telegram from a known sender', function (done) {
       eno=en(testConfig)
-      eno.on("known-data",function(){done();eno.close()})
-      eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2",16))
+      eno.listen("/dev/ttyUSB0")
+      eno.on("known-data",function(data){
+      	assert.equal(data.sensor.eep,"a5-02-14");
+      	assert.equal(data.values[0].type,"Temperature");
+      	assert.equal(data.values[0].value,"23.607843137254903");
+      	done();
+      	eno.close()
+      })
+      eno.on("ready",function(){
+      	 eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2","hex"))
+      })
     });
 
   	it('should be able to send strings', function () {
