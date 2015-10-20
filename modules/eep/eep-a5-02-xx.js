@@ -11,7 +11,7 @@ module.exports=function(eep,data){
 		var Smax       = sensors[type].max
 		var val    = ((Smax-Smin)/(0-255))*(rawVal-255)+Smin
 		ret=[{
-			type:"temperature",
+			type:"Temperature",
 			unit:"°C",
 			value: val
 		}]
