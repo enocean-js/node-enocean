@@ -117,7 +117,7 @@ function SerialPortListener(config){
 				}.bind(this))	
 			}
 			this.emitters.forEach(function(emitter){
-				this.emit("response",telegram);
+				emitter.emit("response",telegram);
 			})
 		}
 	}.bind(this)
