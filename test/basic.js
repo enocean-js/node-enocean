@@ -3,6 +3,7 @@ var path = require("path")
 var fs = require("fs")
 var en = ""
 var eno= ""
+var testConfig={timeout:30,configFilePath:path.resolve("./test/config.json"),sensorFilePath:path.resolve("./test/sensors.json")}
 describe('enocean', function() {
 	before(function() {
       fs.closeSync(fs.openSync('test/sensors.json', 'w'));
@@ -37,7 +38,7 @@ describe('enocean', function() {
       assert.equal(eno.timeout,30)
       assert.equal(eno.configFilePath,path.resolve("./config.json"))
       assert.equal(eno.sensorFilePath,path.resolve("./modules/knownSensors.json"))
-      eno=en({timeout:30,configFilePath:path.resolve("./test/config.json"),sensorFilePath:path.resolve("./test/sensors.json")})
+      eno=en(testConfig)
       assert.equal(eno.configFilePath,path.resolve("./test/config.json"))
       assert.equal(eno.sensorFilePath,path.resolve("./test/sensors.json"))
     });
@@ -70,7 +71,13 @@ describe('enocean', function() {
 
 
     it('should fire a "data" event when receiving a package', function (done) {
-      eno.on("data",function(){done()})
+      eno.on("data",function(){done();eno.close()})
+      eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2",16))
+    });
+
+    it('should fire a "data" event when receiving a package', function (done) {
+      eno=en(testConfig)
+      eno.on("known-data",function(){done();eno.close()})
       eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2",16))
     });
 
