@@ -1,9 +1,11 @@
 # node-enocean
-an enocean implementation for node.js   
-there may still be breaking changes before 1.0.
+an enocean implementation for node.js  
 
-* implementation of eep resolvers.
-* bug fixes
+>The EnOcean technology is an energy harvesting wireless technology used primarily in building automation systems, and is also applied to other applications in industry, transportation, logistics and smart homes. Modules based on EnOcean technology combine micro energy converters with ultra low power electronics, and enable wireless communications between batteryless wireless sensors, switches, controllers and gateways.    
+
+[Wikipedia](https://en.wikipedia.org/wiki/EnOcean)
+
+whats new in the latest version can be found in the [Changelog](https://github.com/Holger-Will/node-enocean/wiki/Changelog)
 
 ## installation
 ```
@@ -28,6 +30,7 @@ enocean.on("known-data",function(data){
 	console.log(data) 
 });
 ```
+
 
 ### teach in automaticly
 
