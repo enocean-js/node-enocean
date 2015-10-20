@@ -1,18 +1,6 @@
 # node-enocean
 an enocean implementation for node.js   
 there may still be breaking changes before 1.0.
-### changelog 0.7.7
-
-* integrated mocha testing
-* implemented a5-11-02
-* fixes...
-
-### changelog 0.7.0 
-
-* implementation event emitter hook.
-* bug fixes
-
-### changelog 0.6.0 
 
 * implementation of eep resolvers.
 * bug fixes
