@@ -6,6 +6,7 @@ module.exports=function(app,config){
 	var outFile = config.hasOwnProperty("sensorFilePath") ? config.sensorFilePath : __dirname + '/knownSensors.json'
 	knownSensors = require(outFile)
 	app.learnMode = "off"
+	app.forgetMode = "off"
 	app.on("data",function(data){
 		if (knownSensors.hasOwnProperty(data.senderId)) {
 			if(data.learnBit===1 || data.choice==="f6"){
@@ -21,6 +22,13 @@ module.exports=function(app,config){
 					app.learnMode="off"
 					app.emitters.forEach(function(emitter){
 						emitter.emit("learn-mode-stop",{reason:"already know sensor"})
+					})
+				}
+				if(app.forgetMode==="on"){
+					app.forgetMode="off"
+					app.forget(data.senderId)
+					app.emitters.forEach(function(emitter){
+						emitter.emit("forget-mode-stop",{reason:"already know sensor"})
 					})
 				}
 			}
@@ -73,6 +81,22 @@ module.exports=function(app,config){
 			})
 		}
 	}
+	app.startForgetting=function(){
+		app.forgetMode="on"
+		app.emitters.forEach(function(emitter){
+			emitter.emit("forget-mode-start",{timeout:app.timeout})
+		})	
+		setTimeout(app.stopForgetting,app.timeout*1000)
+	}
+	app.stopForgetting=function(){
+		if(app.forgetMode=="on"){
+			app.forgetMode="off"
+			app.emitters.forEach(function(emitter){
+				emitter.emit("forget-mode-stop",{reason:"timeout"})
+			})
+		}
+	}
+
 	app.learn = function(sensor){
 		knownSensors[sensor.id]=sensor
 		fs.writeFile(outFile, JSON.stringify(knownSensors, null, 4), function(err) {
