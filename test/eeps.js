@@ -71,6 +71,41 @@ describe('EEP Resolver', function() {
 				}
 			});
 		}
+	});
+	describe('a5-02-20/30', function() {	
 
+		function pad(num,size) {
+			var s = "00000000000000000000000000000000" + num;
+			return s.substr(s.length-size);
+		}
+		function getV(minB,maxB,minV,maxV,val1){
+			var B=((maxV-minV)/(maxB-minB))
+			val0   = ((val1-minV)/B)+minB
+			return pad(Math.floor(val0).toString(16),4)
+		}
+		var sensors={
+			"20":{min:-10,max:41.2}, //10
+			"30":{min:-40,max:62.3}, //20
+		}
+
+		for(var i=0;i<10;i++){
+			it('should return the correct dec for any random hex value (run '+i+')', function () {
+				for(var index in sensors){
+					var min = sensors[index].min
+					var max = sensors[index].max
+					var v1 = Math.round(Math.random()*(max-min))+min
+					var v0 = getV(1023,0,min,max,v1)
+					assert.equal(Math.round(en.getData('a5-02-'+index,'00'+v0+'00')[0].value),v1);
+				}
+			});
+		}
+	});
+	describe('d5-00-01', function() {	
+		it('should interpret "00" to be "open"', function () {
+		assert.equal(en.getData('d5-00-01','00')[0].value,"open");
+		})
+		it('should interpret "01" to be "closed"', function () {
+		assert.equal(en.getData('d5-00-01','01')[0].value,"closed");
+		})
 	});
 });
