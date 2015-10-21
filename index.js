@@ -45,6 +45,7 @@ function SerialPortListener(config){
 			// if port is provided use the  provided one
 			serialPort = new SerialPort(port,{baudrate: 57600});  
 		}
+		
 		serialPort.on("open",function(){
 			this.mem = new Memory(this,{sensorFilePath:this.sensorFilePath})
 			if(configFile.base==="00000000" || !configFile.hasOwnProperty("base")){
