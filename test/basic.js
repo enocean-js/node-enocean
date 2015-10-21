@@ -1,4 +1,5 @@
-var assert = require('assert');
+var assert = require('chai').assert
+var should = require('chai').should()
 var path = require("path")
 var fs = require("fs")
 var en = ""
@@ -17,8 +18,7 @@ describe('enocean', function() {
   after(function() {
       fs.unlinkSync('test/sensors.json')
       fs.unlinkSync('test/config.json')
-      en = require("../")
-      eno=en()
+      eno.close(function(err){})
 
     });
     it('should be a function', function () {
@@ -52,7 +52,7 @@ describe('enocean', function() {
     	// TODO: find a way to get the right usb port automaticly
     	// setup test evvironment with their own config and sensor file
     	eno.on("ready",function(){
-    		done()
+    		eno.close(function(){done()})
     	})
   	});	
   	it('should have a base address by now', function () {
@@ -66,16 +66,25 @@ describe('enocean', function() {
         manufacturer:"THERMOKON",
         desc:"test"
       })
+      assert.equal(eno.allSensors["0006d1a6"].id,"0006d1a6")
     });
-
-
-
-    it('should fire a "data" event when receiving a package', function (done) {
-      eno.on("data",function(data){
+    it('should give acces to info from known sensors', function () {
+      var info=eno.info("0006d1a6")
+      assert.equal(info.id,"0006d1a6")
+      assert.equal(info.eep,"a5-02-14")
+      assert.equal(info.manufacturer,"THERMOKON")
+      assert.equal(info.desc,"test")
+    });
+    it('should fire a "data" event when receiving a package (even known ones)', function (done) {
+    	eno=en(testConfig)
+      	eno.listen("/dev/ttyUSB0")
+      	eno.on("data",function(data){
       	assert.equal(data.senderId,"0006d1a6");
-      	done();eno.close()
+      	eno.close(function(){done()})
       })
-      eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2","hex"))
+      eno.on("ready",function(){
+      	 eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2","hex"))
+      })
     });
 
     it('should know the content of a telegram from a known sender', function (done) {
@@ -85,21 +94,55 @@ describe('enocean', function() {
       	assert.equal(data.sensor.eep,"a5-02-14");
       	assert.equal(data.values[0].type,"Temperature");
       	assert.equal(data.values[0].value,"23.607843137254903");
-      	done();
-      	eno.close()
+      	eno.close(function(){done()})
+      })
+      eno.on("ready",function(){
+      	 eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2","hex"))
+      })
+      
+    });
+    it('should be able to forget learned sensors', function () {
+      eno.forget("0006d1a6")
+      should.not.exist(eno.info("0006d1a6"))
+    });
+
+    it('should fire a "unknow-data" event when receiving a package that are not known', function (done) {
+    	eno=en(testConfig)
+      	eno.listen("/dev/ttyUSB0")
+      	eno.on("unknown-data",function(data){
+      	eno.close(function(){done()})
       })
       eno.on("ready",function(){
       	 eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2","hex"))
       })
     });
-
-    it('should connect to the first possible port, if no port is provided', function (done) {
-      eno=en(testConfig)
-      eno.listen()
-      eno.on("ready",function(data){
-      	done();
-      	eno.close()
-      })
+    it('should fire a "start-learning" and "stop-learning" event when learning', function (done) {
+    	eno=en(testConfig)
+      	eno.listen("/dev/ttyUSB0")
+      	eno.timeout=1
+      	var started=0
+      	eno.on("ready",function(){
+      		eno.startLearning()
+      	})
+      	eno.on("learn-mode-start",function(){
+			started=1
+      	})
+      	eno.on("learn-mode-stop",function(){
+      		assert.equal(started,1)
+      		eno.close(function(){done()})
+      	})
+    });
+    it('should be able to manually stop learning', function (done) {
+    	eno=en(testConfig)
+      	eno.listen("/dev/ttyUSB0")
+      	eno.timeout=100
+      	eno.on("ready",function(){
+      		eno.startLearning()
+      		eno.stopLearning()
+      	})
+      	eno.on("learn-mode-stop",function(){
+      		eno.close(function(){done()})
+      	})
     });
 
   	it('should be able to send strings', function () {
