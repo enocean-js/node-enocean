@@ -26,10 +26,10 @@ enocean.on("learn-mode-stop",function(data){
 	console.log("learning stoped: ",data.reason)
 })
 
-enocean.on("learn",function(data){
+enocean.on("learned",function(data){
 	console.log("learned: ",data)
 })
 
-enocean.on("forget",function(data){
+enocean.on("forgotten",function(data){
 	console.log("forgotten: ",data)
 })

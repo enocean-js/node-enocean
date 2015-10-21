@@ -104,7 +104,7 @@ module.exports=function(app,config){
     		} else {
     			app.learnMode="off"
     			app.emitters.forEach(function(emitter){
-					emitter.emit("learn",sensor)
+					emitter.emit("learned",sensor)
       				emitter.emit("learn-mode-stop",{reason:"success"})
 				})
    			 }
@@ -121,7 +121,7 @@ module.exports=function(app,config){
       			//console.log(err);
     		} else {
 				app.emitters.forEach(function(emitter){
-					emitter.emit("forget",tmp)
+					emitter.emit("forgotten",tmp)
 				})
       			
    			 }
