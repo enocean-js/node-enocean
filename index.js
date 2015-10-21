@@ -141,6 +141,13 @@ function SerialPortListener(config){
     	var s = "00000000000000000000000000000000" + num;
     	return s.substr(s.length-size);
 	}
+	this.register=function(socket){
+		socket.on("start-learning",this.startLearning)
+		socket.on("start-forgetting",this.startForgetting)
+		socket.on("send",this.send)
+		socket.on("learn",this.learn)
+		socket.on("forget",this.forget)
+	}
 }
 
 
