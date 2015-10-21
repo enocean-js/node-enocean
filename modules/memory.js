@@ -77,7 +77,6 @@ module.exports=function(app,config){
 		knownSensors[sensor.id]=sensor
 		fs.writeFile(outFile, JSON.stringify(knownSensors, null, 4), function(err) {
     		if(err) {
-      			//console.log(err);
     		} else {
     			app.learnMode="off"
     			app.emitters.forEach(function(emitter){
