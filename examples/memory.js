@@ -1,4 +1,4 @@
-var enocean      = require("../")(); 
+var enocean = require("../")(); 
 
 enocean.listen("/dev/ttyUSB0"); 
 
