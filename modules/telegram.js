@@ -1,5 +1,22 @@
-// # EnOcean ESP 3.0 implementation
-// this module extracts basic info from telegrams which are passed here as a Buffer
+// 	   This file is part of node-enocean.
+
+//     node-enocean. is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+
+//     node-enocean. is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+
+//     You should have received a copy of the GNU General Public License
+//     along with node-enocean.  If not, see <http://www.gnu.org/licenses/>.
+
+
+
+//     # EnOcean ESP 3.0 implementation
+//     this module extracts basic info from telegrams which are passed here as a Buffer
 
 var Manufacturer_List = [ // the List of Manufacturers. the index is equal to the number transmitted in learn telegrams
 	'MANUFACTURER_RESERVED' ,'PEHA','THERMOKON','SERVODAN','ECHOFLEX_SOLUTIONS','OMNIO_AG','HARDMEIER_ELECTRONICS','REGULVAR_INC','AD_HOC_ELECTRONICS',

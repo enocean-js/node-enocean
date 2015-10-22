@@ -1,3 +1,18 @@
+// 	   This file is part of node-enocean.
+
+//     node-enocean. is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+
+//     node-enocean. is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+
+//     You should have received a copy of the GNU General Public License
+//     along with node-enocean.  If not, see <http://www.gnu.org/licenses/>.
+
 var SerialPort   = require("serialport").SerialPort;
 var EventEmitter = require('events').EventEmitter;
 var Telegram     = require("./modules/telegram.js");
@@ -5,7 +20,7 @@ var crc          = require("./modules/crc.js")
 var Memory       = require("./modules/memory.js")
 var fs           = require("fs")
 
-function SerialPortListener(config){
+function SerialPortListener( config ) {
 	this.timeout      = config.timeout ? config.timeout : 60
 	this.configFilePath = config.configFilePath ? config.configFilePath : __dirname + "/config.json"
 	this.sensorFilePath = config.sensorFilePath ? config.sensorFilePath : __dirname + "/modules/knownSensors.json"
