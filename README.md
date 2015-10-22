@@ -35,16 +35,14 @@ enocean.on("known-data",function(data){
 ### teach in automaticly
 
 to make a sensor known you have to bring the enocean object into a lerning state by calling `.startLearning()`
-When a teach in telegram is received while the object is in the learning state, and the sensor is successfully learned, a "learn" event is fired.
+When a sensor is successfully learned, a "learned" event is fired.
 
 ```
 enocean.startLearning()
-enocean.on("learn",function(data){   
+enocean.on("learned",function(data){   
 	console.log(data) 
 });
 ```
-
-see the example `memory.js` in the examples folder for more info.
 
 the learning phase stops after a configurable timeout. the default is 60 seconds.
 during runtime you can change this timeout with `enocean.timeout=30`
@@ -116,6 +114,7 @@ to find out how to use them, see the examples in the example folder here or in t
 ### the base address
 
 for sending Data the base address is needed. You don't have to care about it though, because its handled automaticly for you. If you are interrested in the details see "sending Data" in the wiki.
+you can access your base address with `enocean.base`
 
 ## the config object
 
