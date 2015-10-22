@@ -142,6 +142,7 @@ function SerialPortListener(config){
     	return s.substr(s.length-size);
 	}
 	this.register=function(socket){
+		console.log("registerd")
 		socket.on("start-learning",this.startLearning)
 		socket.on("start-forgetting",this.startForgetting)
 		socket.on("send",this.send)
