@@ -33,7 +33,7 @@ module.exports     = function(app,config){
 					// but we allready know this sensor
 					app.learnMode = "off" // turn of "teach in"-mode to prevent unwanted sensors to be tought in accedently
 					app.emitters.forEach( function( emitter ) {
-						emitter.emit( "learn-mode-stop" , { reason : "already know sensor" } ) // tell everyone that we stop the "teach-in"-mode
+						emitter.emit( "learn-mode-stop" , { code : 1 , reason : "already known sensor" } ) // tell everyone that we stop the "teach-in"-mode
 					} )
 				}
 				if( app.forgetMode === "on" ) {
@@ -42,7 +42,7 @@ module.exports     = function(app,config){
 					app.forget( data.senderId ) // delete the sensor
 				}
 			}
-			if( app.forgetMode === "on" && data.coice === "f6" ) {
+			if( app.forgetMode === "on" && data.choice === "f6" ) {
 					// we are in forget mode, and we received an RPS telegram form a known sensor
 					// but the learnBit is not set, as RPS telegramns don't have learnBits...
 					// this indicates that it should be forgotten.
@@ -113,7 +113,7 @@ module.exports     = function(app,config){
 			// but only if we are still in leranMode
 			app.learnMode  =" off"
 			app.emitters.forEach( function( emitter ) {
-				emitter.emit( "learn-mode-stop" , { reason : "timeout" } ) // tell everyone we are not in teach in anymore
+				emitter.emit( "learn-mode-stop" , { code : 2 , reason : "timeout" } ) // tell everyone we are not in teach in anymore
 			} )
 		}
 	}
@@ -123,7 +123,7 @@ module.exports     = function(app,config){
 		// this is used to delete single sensors, through its teach in telegram.
 		app.forgetMode  = "on"
 		app.emitters.forEach( function( emitter ) {
-			emitter.emit( "forget-mode-start" , { timeout: app.timeout } ) // tell everyone we are in forget-mode
+			emitter.emit( "forget-mode-start" , { timeout : app.timeout } ) // tell everyone we are in forget-mode
 		} )	
 		setTimeout( app.stopForgetting , app.timeout * 1000 ) // make sure we leave stop mode after timeout
 	}
@@ -134,7 +134,7 @@ module.exports     = function(app,config){
 			// but only if we are in forget Mode
 			app.forgetMode  = "off"
 			app.emitters.forEach( function( emitter ) {
-				emitter.emit( "forget-mode-stop" , { reason : "timeout" } ) // tell everyone we are not in forget mode anymore
+				emitter.emit( "forget-mode-stop" , { code : 2 , reason : "timeout" } ) // tell everyone we are not in forget mode anymore
 			} )
 		}
 	}
@@ -147,7 +147,7 @@ module.exports     = function(app,config){
 		knownSensors[ sensor.id ] = sensor // save the sensor under its id
 		app.learnMode = "off" // stop the learnMode in any case
 		app.emitters.forEach( function( emitter ) { 
-      		emitter.emit( "learn-mode-stop" , { reason : "success" } ) // tell everyone we are not in learn mode anymore
+      		emitter.emit( "learn-mode-stop" , { code : 0 , reason : "success" } ) // tell everyone we are not in learn mode anymore
 		} )
 		fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {
 			// and actually save it to disc
@@ -173,7 +173,7 @@ module.exports     = function(app,config){
 		}
 		app.forgetMode="off" // stop forget Mode
 		app.emitters.forEach( function( emitter ) {
-			emitter.emit( "forget-mode-stop" , {reason:"success"} ) // and tell the "world" we stoped forget mode
+			emitter.emit( "forget-mode-stop" , { code : 0 , reason:"success"} ) // and tell the "world" we stoped forget mode
 		} )
 		fs.writeFile( outFile , JSON.stringify( knownSensors, null, 4), function( err ) {
 			// actually save the changes to disk
@@ -194,7 +194,7 @@ module.exports     = function(app,config){
 		return knownSensors[ id ]
 	}
 
-	app.allSensors = function( ) {
+	app.getSensors = function( ) {
 		// return all known sensors
 		return knownSensors
 	}
