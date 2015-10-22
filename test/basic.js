@@ -59,14 +59,18 @@ describe('enocean', function() {
     	assert(eno.base.length===8 && eno.base!=="00000000")
   	});
 
-    it('should save sensors passed to the learn function', function () {
+    it('should save sensors passed to the learn function', function (done) {
       eno.learn({
         id:"0006d1a6",
         eep:"a5-02-14",
         manufacturer:"THERMOKON",
         desc:"test"
       })
-      assert.equal(eno.allSensors["0006d1a6"].id,"0006d1a6")
+      eno.on("learned",function(data){
+        assert.equal(data.id,"0006d1a6")
+        done()
+      })
+      
     });
     it('should give acces to info from known sensors', function () {
       var info=eno.info("0006d1a6")
