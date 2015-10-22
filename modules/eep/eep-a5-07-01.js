@@ -6,7 +6,7 @@ module.exports=function(eep,data){
 	var type=eepa[2]
 	var typeNr=parseInt(type,16)
 	rawVal = ((parseInt(data,16) & 0xff00)>>>8)
-	var pir = (rawVal < 128) ? "PIR off" : "PIR on"
+	var pir = (rawVal < 128) ? "off" : "on"
 	var i = (parseInt(data,16) & 1)
 
 	rawVol = ((parseInt(data,16) & 0xff000000)>>>24)
@@ -18,9 +18,9 @@ module.exports=function(eep,data){
 			unit:"V",
 			value: val1
 		}
-	var contact=["supported","not supported"]
+	var contact=["not supported","supported"]
 
-	if(eep==="d5-00-01"){
+	if(eep==="a5-07-01"){
 		ret = [{
 			type:"Supply voltage",
 			unit:"",
@@ -31,7 +31,7 @@ module.exports=function(eep,data){
 			unit:"",
 			value: pir
 		}]
-		if(i==0) ret.push(vol)
+		if(i==1) ret.push(vol)
 		return ret
 	}
 	return ret
