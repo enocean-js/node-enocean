@@ -14,6 +14,6 @@ module.exports=function(eep,data){
 			unit:"",
 			value: contact[i]
 		}]
-	return ret
 	}
+	return ret
 }
