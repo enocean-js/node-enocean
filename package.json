@@ -24,6 +24,8 @@
   },
   "devDependencies": {
     "chai": "^3.3.0",
-    "mocha": "^2.3.3"
+    "mocha": "^2.3.3",
+    "node-enocean-button": "^1.0.0",
+    "node-enocean-dimmer": "^1.0.0"
   }
 }
