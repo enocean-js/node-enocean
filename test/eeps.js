@@ -7,6 +7,11 @@ describe('EEP Resolver', function() {
 	it('should be available', function () {
 		assert.equal(typeof en.getData,"function")
 	});
+	describe('00-00-00', function() {
+		it('should return unknown for unknown eeps', function () {
+	      	assert.equal(en.getData("00-00-00","00")[0].value,"unknown")
+	  	});
+	});
 	describe('f6-02-03', function() {
 		it('should return a value of "released" for "00"', function () {
 	      	assert.equal(en.getData("f6-02-03","00")[0].value,"released")
