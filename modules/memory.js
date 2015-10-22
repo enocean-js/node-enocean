@@ -1,3 +1,7 @@
+// # memory implementation.
+// this module implements saving and deleting sensors as well as hanbling telegrams from known sensor
+// this implementation uses the fiesystem to stor sensor info
+
 var fs             = require("fs")
 var knownSensors   = ""
 module.exports     = function(app,config){
