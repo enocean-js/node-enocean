@@ -16,7 +16,9 @@ module.exports=function(app,config){
 				data.values=da
 				app.emitters.forEach(function(emitter){
 					emitter.emit("known-data",data)
-				})	
+				})
+				knownSensors[data.senderId].last=data.values
+				fs.writeFile(outFile, JSON.stringify(knownSensors, null, 4), function(err) {})
 			} else {
 				if(app.learnMode==="on"){
 					app.learnMode="off"
