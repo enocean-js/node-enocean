@@ -5,7 +5,7 @@ var fs = require("fs")
 var en = ""
 var eno= ""
 var testConfig={timeout:30,configFilePath:path.resolve("./test/config.json"),sensorFilePath:path.resolve("./test/sensors.json")}
-describe('enocean', function() {
+describe('enocean(basic)', function() {
 	before(function() {
       fs.closeSync(fs.openSync('test/sensors.json', 'w'));
       fs.closeSync(fs.openSync('test/config.json', 'w'));
@@ -105,6 +105,12 @@ describe('enocean', function() {
       })
       
     });
+    it('should save the last telegram of known sensors', function () {
+      var info=eno.info("0006d1a6")
+      assert.equal(info.last[0].type,"Temperature");
+      assert.equal(info.last[0].value,"23.607843137254903");
+    });
+
     it('should be able to forget learned sensors', function () {
       eno.forget("0006d1a6")
       should.not.exist(eno.info("0006d1a6"))
@@ -120,34 +126,8 @@ describe('enocean', function() {
       	 eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2","hex"))
       })
     });
-    it('should fire a "start-learning" and "stop-learning" event when learning', function (done) {
-    	eno=en(testConfig)
-      	eno.listen("/dev/ttyUSB0")
-      	eno.timeout=1
-      	var started=0
-      	eno.on("ready",function(){
-      		eno.startLearning()
-      	})
-      	eno.on("learn-mode-start",function(){
-			started=1
-      	})
-      	eno.on("learn-mode-stop",function(){
-      		assert.equal(started,1)
-      		eno.close(function(){done()})
-      	})
-    });
-    it('should be able to manually stop learning', function (done) {
-    	eno=en(testConfig)
-      	eno.listen("/dev/ttyUSB0")
-      	eno.timeout=100
-      	eno.on("ready",function(){
-      		eno.startLearning()
-      		eno.stopLearning()
-      	})
-      	eno.on("learn-mode-stop",function(){
-      		eno.close(function(){done()})
-      	})
-    });
+
+
 
   	it('should be able to send strings', function () {
     	assert.doesNotThrow(function(){eno.send("00")})
