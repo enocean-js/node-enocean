@@ -83,7 +83,7 @@ module.exports     = function(app,config){
 						id           : data.senderId,
 						eep          : "f6-02-03",
 						manufacturer : "unknown",
-						title        : "New Sensor",          // give it some name
+						title        : "New RPS Switch",          // give it some name
 						desc         : "I'm a new sensor..."  // and some description
 					} )
 				} else {
