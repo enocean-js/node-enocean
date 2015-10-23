@@ -17,13 +17,13 @@ module.exports=function(eep,data){
 		var val2    = ((Smax-Smin)/255)*(rawVal)+Smin
 		if((parseInt(data,16) & 2)===2) {
 			ret=[{
-				type:"temperature",
-				unit:"°C",
-				value: val1
-			},{
 				type:"humidity",
 				unit:"%rF",
 				value: val2
+			},{
+				type:"temperature",
+				unit:"°C",
+				value: val1
 			}]
 		}else{
 			ret=[{
