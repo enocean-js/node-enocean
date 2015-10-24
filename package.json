@@ -1,6 +1,6 @@
 {
   "name": "node-enocean",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "full implementation of the enocean protocol (ESP3 + EEP2.6)",
   "main": "index.js",
   "scripts": {
