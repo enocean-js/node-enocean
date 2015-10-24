@@ -65,6 +65,9 @@ describe('enocean(learn and forget)', function() {
     })
     eno.on("learned",function(data){
       assert.equal(data.id,"0006d1a6")
+      console.log(data.eepFunc)
+      assert.equal(data.eepFunc,"Temperature Sensor")
+      assert.equal(data.eepType,"Temperature Sensor Range -20°C to +60°C")
       eno.close(function(){done()})
     })
   });
@@ -98,6 +101,8 @@ describe('enocean(learn and forget)', function() {
     })
     eno.on("learned",function(data){
       assert.equal(data.id,"002a1d44")
+      assert.equal(data.eepFunc,"Rocker Switch, 2 Rocker")
+      assert.equal(data.eepType,"Light Control - Application Style 1")
       eno.close(function(){done()})
     })
   });
