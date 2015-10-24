@@ -19,7 +19,7 @@ var fs           = require( "fs" )
 var Telegram     = require( "./modules/telegram.js" )
 var crc          = require( "./modules/crc.js" )
 var Memory       = require( "./modules/memory.js" )
-
+var eepDesc      = require("./modules/eepDesc.js")
 
 function SerialPortListener( config ) {
 	// read the config object passed to the constructor. fill the non existin fileds with defaults
@@ -37,6 +37,8 @@ function SerialPortListener( config ) {
 	var state           = ""   //part of the getBase Hack. Sometimes the call to get base does not return a response. state is used to repeat the process until we have a base address
 	// the eepResolvers used to extract data from known sensors. you can push your own handlers here
 	this.eepResolvers   = require("./modules/eep.js")  
+	// eepDesc is an Array with Description of all eeps and eep funcs used to look up description (in plain english)
+	this.eepDesc        = eepDesc
 	// an array of emmiter, all events emitted are emitted on all emitters. start with self, but you can push your own emitters here.
 	// for example: add a socket.io object to this array, to have all events automaticly forwarded to the browser.
 	this.emitters       = [ this ] 

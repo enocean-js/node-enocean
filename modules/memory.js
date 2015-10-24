@@ -76,9 +76,10 @@ module.exports     = function(app,config){
 						id           : data.senderId,
 						eep          : data.eep,
 						manufacturer : data.manufacturer,
-						title        : "New Sensor",          // give it some name
-						desc         : "I'm a new sensor..."  // and some description
-						
+						title        : "New Sensor",           // give it some name
+						desc         : "I'm a new sensor...",  // and some description
+						eepFunc      : app.eepDesc[data.eep.substring(0,5)], // finde the func description of the eep
+						eepType      : app.eepDesc[data.eep]   // find the Type description of the eep
 					} )
 				} else {
 					// we are not in teach in mode, but this is a "tech in" telegram
@@ -100,8 +101,10 @@ module.exports     = function(app,config){
 						id           : data.senderId,
 						eep          : "f6-02-03",
 						manufacturer : "unknown",
-						title        : "New RPS Switch",          // give it some name
-						desc         : "I'm a new sensor..."  // and some description
+						title        : "New RPS Switch",       // give it some name
+						desc         : "I'm a new sensor...",  // and some description
+						eepFunc      : app.eepDesc["f6-02"], // finde the func description of the eep
+						eepType      : app.eepDesc["f6-02-03"]   // find the Type description of the eep
 					} )
 				} else {
 					// we are not in learnMode and the sensor of this telegram is not known.
