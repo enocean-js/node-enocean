@@ -7,7 +7,6 @@ describe('EEP Descriptions', function() {
   	});
   	it('should exist for a5-38-08', function () {
   		var tel="a5-02-03"
-  		console.log(tel.substring(0,5))
       	assert.equal(eo.eepDesc["a5-38-08"],"Gateway")
   	});
   	it('should exist for a5-02', function () {

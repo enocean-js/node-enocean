@@ -1,3 +1,4 @@
+var Help = require("./eepHelper.js")
 module.exports=function(eep,data){
 	var ret=null
 	var eepa=eep.split("-")
@@ -6,16 +7,10 @@ module.exports=function(eep,data){
 	var type=eepa[2]
 	var typeNr=parseInt(type,16)
 	if(choice==="a5" && func==="04" && sensors[type]!==undefined){
-
-		rawVal = ((parseInt(data,16) & 0xff00)>>>8)
-		var Smin       = sensors[type].tmin
-		var Smax       = sensors[type].tmax
-		var val1    = ((Smax-Smin)/255)*(rawVal)+Smin
-		rawVal = ((parseInt(data,16) & 0xff0000)>>>16)
-		Smin       = sensors[type].hmin
-		Smax       = sensors[type].hmax
-		var val2    = ((Smax-Smin)/255)*(rawVal)+Smin
-		if((parseInt(data,16) & 2)===2) {
+		var val1 = Help.extractByteValue(1,0,250,sensors[type].tmin,sensors[type].tmax,data)
+		var val2 = Help.extractByteValue(2,0,250,sensors[type].hmin,sensors[type].hmax,data)
+		var tempavail= Help.extractBitValue(0,1,1,data)
+		if(tempavail) {
 			ret=[{
 				type:"humidity",
 				unit:"%rF",

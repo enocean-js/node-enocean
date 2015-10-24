@@ -1,3 +1,4 @@
+var Help = require("./eepHelper.js")
 module.exports=function(eep,data){
 	var ret=null
 	var eepa=eep.split("-")
@@ -6,26 +7,19 @@ module.exports=function(eep,data){
 	var type=eepa[2]
 	var typeNr=parseInt(type,16)
 	if(eep=="a5-05-01"){
-		rawVal = ((parseInt(data,16) & 0x3ff0000)>>>16)
-		var Smin       = sensors[type].tmin
-		var Smax       = sensors[type].tmax
-		var val1    = ((Smax-Smin)/1023)*(rawVal)+Smin
+		var val1 = Help.extract10BitValue(1,0,1023,500,1150,data)
 		var trigger = "heartbeat"
-		if((parseInt(data,16) & 2)===2) trigger = "event"
+		var trg= Help.extractBitEnum(0,1,1,data,["heartbeat","event"])
 			ret=[{
 				type:"barometric pressure",
 				unit:"hPa",
 				value: val1
 			},{
 				type: "trigger",
-				value: trigger,
+				value: trg,
 				unit:""
 			}]
 		return ret
 	}
 	return ret
-}
-
-var sensors={
-"01":{min:500,max:1150} //1
 }

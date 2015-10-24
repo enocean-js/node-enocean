@@ -1,3 +1,4 @@
+var Help = require("./eepHelper.js")
 module.exports=function(eep,data){
 	var ret=null
 	var eepa=eep.split("-")
@@ -6,16 +7,12 @@ module.exports=function(eep,data){
 	var type=eepa[2]
 	var typeNr=parseInt(type,16)
 	if(choice==="a5" && func==="02" && sensors[type]!==undefined){
-		rawVal = ((parseInt(data,16) & 0xff00)>>>8)
-		var Smin       = sensors[type].min
-		var Smax       = sensors[type].max
-		var val    = ((Smax-Smin)/(0-255))*(rawVal-255)+Smin
-		ret=[{
+		val = Help.extractByteValue(1,255,0,sensors[type].min,sensors[type].max,data)
+		return [{
 			type:"Temperature",
 			unit:"°C",
 			value: val
 		}]
-		return ret
 	}
 	return ret
 }
@@ -45,3 +42,4 @@ var sensors={
 "1a":{min:40,max:120}, //1a
 "1b":{min:50,max:130} //1b
 }
+

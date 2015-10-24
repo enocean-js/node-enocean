@@ -1,0 +1,42 @@
+a5-02 Temeprature Sensor(s!)
+a5-05-01 units
+a5-06 (60(.!)000)CX
+a5-06-03 (R!)ange
+a5-07 Voltage Monitor? Ilumination?
+
+a5-06 -08 Light Illumination Sensor
+
+a5-09-02 0( !)ppm to... (-?
+a5-09-06 Radon (Sensor?)
+a5-09-07 Particle (Sensor)
+a5-10-03 and a5-10-07 ("and" satt ",") ff
+a5-10-0a set point (adjust? control)
+a5-10-12 set point (control!)
+a5-10-13/14 "and"<-","
+  15/16 10 (Bit) but 6 (bit)
+  16 ";""->"and"... control 2x
+  17 ","->"and"
+  18 (Temperature?) Set Point
+  18-1d order of temperature Sensor nor space before "control"(1b,1c as well)
+  1A-1B Supply voltage monitor vs. Supply Voltage Monitor
+  20 Set Point (Control) with... Temperature (Sensor!)
+  21 Temperature and Humidity Sensor
+  
+a5-11 Controller vs. Controller Output vs Status
+
+a5-12 (AMR) nötig?
+
+a5-13-10 Position and Radiation (groß)
+
+a5-14 Supply Voltage Monitor
+
+a5-14-06 and Illumination
+
+a5-30-03 Wake + Temperature (Sensor)
+
+a5-30-03 8 Bit(s)
+
+Questions:
+
+(a5-10-1f whats unoccupanca vs.) 
+a5-20 how to guess direction?

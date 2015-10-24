@@ -6,9 +6,9 @@ module.exports=function(eep,data){
 	var func=eepa[1]
 	var type=eepa[2]
 	var typeNr=parseInt(type,16)
-	if(eep==="a5-06-01"){
-		val1=Help.extractByteValue(1,0,255,600,60000,data)
-		val2=Help.extractByteValue(2,0,255,300,30000,data)
+	if(eep==="a5-06-02"){
+		val1=Help.extractByteValue(1,0,255,0,1020,data)
+		val2=Help.extractByteValue(2,0,255,0,510,data)
 		val3=Help.extractByteValue(3,0,255,0,5.1,data)
 		var select=Help.extractBitValue(0,0,1,data)
 		if(select==0){

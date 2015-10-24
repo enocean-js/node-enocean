@@ -1,3 +1,4 @@
+var Help = require("./eepHelper.js")
 module.exports=function(eep,data){
 	var ret=null
 	var eepa=eep.split("-")
@@ -9,10 +10,7 @@ module.exports=function(eep,data){
 	var pir = (rawVal < 128) ? "off" : "on"
 	var i = (parseInt(data,16) & 1)
 
-	rawVol = ((parseInt(data,16) & 0xff000000)>>>24)
-	var Smin       = 0
-	var Smax       = 5.0
-	var val1    = ((Smax-Smin)/255)*(rawVol)+Smin
+	val1=Help.extractByteValue(3,0,250,0,5,data)
 	vol={
 			type:"Voltage",
 			unit:"V",
@@ -22,15 +20,16 @@ module.exports=function(eep,data){
 
 	if(eep==="a5-07-01"){
 		ret = [{
-			type:"Supply voltage",
-			unit:"",
-			value: contact[i]
-		},
-		{
 			type:"PIR Status",
 			unit:"",
 			value: pir
-		}]
+		},
+		{
+			type:"Supply voltage",
+			unit:"",
+			value: contact[i]
+		}
+		]
 		if(i==1) ret.push(vol)
 		return ret
 	}

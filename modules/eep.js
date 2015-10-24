@@ -12,16 +12,21 @@
 
 //     You should have received a copy of the GNU General Public License
 //     along with node-enocean.  If not, see <http://www.gnu.org/licenses/>.
-var eep=[]
+var eep = []
+// RPS
 eep.push(require("./eep/eep-f6-02-03.js"))
+// 1BS
+eep.push(require("./eep/eep-d5-00-01.js"))
+//  4BS
 eep.push(require("./eep/eep-a5-02-xx.js"))
 eep.push(require("./eep/eep-a5-02-10bit.js"))
 eep.push(require("./eep/eep-a5-04-xx.js"))
 eep.push(require("./eep/eep-a5-04-10bit.js"))
 eep.push(require("./eep/eep-a5-05-01.js"))
 eep.push(require("./eep/eep-a5-06-01.js"))
+eep.push(require("./eep/eep-a5-06-02.js"))
+eep.push(require("./eep/eep-a5-06-03.js"))
 eep.push(require("./eep/eep-a5-11-02.js"))
-eep.push(require("./eep/eep-d5-00-01.js"))
 eep.push(require("./eep/eep-a5-07-01.js"))
 
-module.exports=eep
+module.exports = eep
