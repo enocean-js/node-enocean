@@ -76,7 +76,7 @@ module.exports     = function(app,config){
 						id           : data.senderId,
 						eep          : data.eep,
 						manufacturer : data.manufacturer,
-						title        : "New Sensor",           // give it some name
+						title        : "New " + app.eepDesc[data.eep.substring(0,5)],           // give it some name
 						desc         : "I'm a new sensor...",  // and some description
 						eepFunc      : app.eepDesc[data.eep.substring(0,5)], // finde the func description of the eep
 						eepType      : app.eepDesc[data.eep]   // find the Type description of the eep
