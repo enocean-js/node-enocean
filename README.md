@@ -68,15 +68,16 @@ alternatvely you can also hand edit the knownSensors.json file. By default its l
 the enocean object has a property called `.eepResolvers`. This is an array which holds functions that can handle specific EEPs. When a known Sensor is received, the eep is determined form the sensorFile. Then the databytes of the telegram are passed to each resolver function one after the other until one of them returns somthing other than `null`. The build in resolvers implement the following eep
 
 * f6-03-02
+* d5-00-01
 * a5-02-xx
 * a5-04-xx
 * a5-05-xx
-* a5-06-01
+* a5-06-xx
 * a5-07-01
 * a5-11-02
-* d5-00-01
 
-more to come...   
+I will add more when i need the or find the time to add some random ones. 
+**if you need a specific eep that is currently not supported, just let me know. It will be a pleasure to add them.**
 
 you can easily implement your own eep handler, by adding a function to the .eepResolver array.
 
