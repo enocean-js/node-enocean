@@ -5,7 +5,9 @@ an enocean implementation for node.js
 
 [Wikipedia](https://en.wikipedia.org/wiki/EnOcean)
 
-to find out whats new in the latest version see the [Changelog](https://github.com/Holger-Will/node-enocean/wiki/Changelog)
+to find out whats new in the latest version see the [changelog](https://github.com/Holger-Will/node-enocean/wiki/Changelog)
+
+for a full documentation of the interface visit the [wiki-page](https://github.com/Holger-Will/node-enocean/wiki/the-Enocean-Object) (Work In Progress)
 
 ## installation
 ```
