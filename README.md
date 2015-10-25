@@ -9,7 +9,7 @@ to find out whats new in the latest version see the [changelog](https://github.c
 
 for a full documentation of the interface visit the [wiki-page](https://github.com/Holger-Will/node-enocean/wiki/the-Enocean-Object) (Work In Progress)
 
-for a fully function server/client boilerplate see [node-enocean-server-template](https://github.com/Holger-Will/node-enocean-server-template)
+for a fully functional server/client boilerplate see [node-enocean-server-template](https://github.com/Holger-Will/node-enocean-server-template)
 
 ## installation
 ```
