@@ -38,18 +38,7 @@ describe('EEP Resolver', function() {
 			assert.equal(en.getData('d5-00-01','01')[0].value,"closed");
 		})
 	});
-	describe('a5-07-01', function() {	
-		it('should return the "supported" "on" the PIR Status and Voltage', function () {
-			var dat=en.getData('a5-07-01','c307ff09')
-			assert.equal(dat[0].value,"supported")
-			assert.equal(dat[1].value,"on")
-			assert.equal(dat[2].value,"3.8235294117647056")
-			assert.equal(dat[0].type,"Supply voltage")
-			assert.equal(dat[1].type,"PIR Status")
-			assert.equal(dat[2].type,"Voltage")
-			assert.equal(dat[2].unit,"V")
-		})
-	});
+
 	
 	
 });
