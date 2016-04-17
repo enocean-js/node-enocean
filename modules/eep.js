@@ -28,5 +28,5 @@ eep.push(require("./eep/eep-a5-06-02.js"))
 eep.push(require("./eep/eep-a5-06-03.js"))
 eep.push(require("./eep/eep-a5-11-02.js"))
 eep.push(require("./eep/eep-a5-07-01.js"))
-
+eep.push(require("./eep/eep-a5-09-04.js"))
 module.exports = eep
