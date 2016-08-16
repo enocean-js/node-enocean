@@ -32,6 +32,15 @@ module.exports     = function(app,config){
 	app.on( "data" , function( data ) {
 		if ( knownSensors.hasOwnProperty( data.senderId )) {
 			//if sensor is known, extract the content of the Data Bits.
+			if(data.choice==="d2"){
+				data.sensor  = knownSensors[ data.senderId ]
+				data.values = app.getData( data.sensor.eep , data.raw )
+				app.emitters.forEach(function(emitter){
+					emitter.emit("known-data",data) // and emmit an event propagating the extracted Data downstream
+				} )
+				knownSensors[ data.senderId ].last = data.values
+				fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {} )
+			}
 			if( data.learnBit === 1 || data.choice === "f6" ) {
 				// but only if it is not a learn Telegram (learnBit==1)
 				var sensor  = knownSensors[ data.senderId ] // get the sensor Info like the eep and manufacurer Info from the memory file
@@ -68,10 +77,10 @@ module.exports     = function(app,config){
 		} else {
 		// ???? we don't know this sensor ???
 			if( data.learnBit === 0 ) {
-			// but it's a "teach in"-telegram, so it wants to tell us about itself 
+			// but it's a "teach in"-telegram, so it wants to tell us about itself
 				if( app.learnMode === "on" ) {
-				// we are in learnMode, so extract the sensor info frm the telegram 
-				// and save tha info 
+				// we are in learnMode, so extract the sensor info frm the telegram
+				// and save tha info
 					app.learn( {
 						id           : data.senderId,
 						eep          : data.eep,
@@ -88,12 +97,12 @@ module.exports     = function(app,config){
 					// prevent false positives
 						app.emitters.forEach( function( emitter ) {
 							emitter.emit( "unknown-teach-in" , data ) // tell everyone we received an unknown "teach-in"
-						} )	
+						} )
 					}
 				}
 			} else {
 				// we don't know the sender and the leranBit is not set
-				if( data.choice === "f6" && app.learnMode === "on" ) { 
+				if( data.choice === "f6" && app.learnMode === "on" ) {
 					// but this is an "RPS" signal ( remeber RPS don't have learn bits ), and we are in teach in mode
 					// so treat every RPS received during teach in a a request to be tought in
 					// do so...
@@ -108,10 +117,10 @@ module.exports     = function(app,config){
 					} )
 				} else {
 					// we are not in learnMode and the sensor of this telegram is not known.
-					// neither is this a learn telegram. 
+					// neither is this a learn telegram.
 					app.emitters.forEach( function( emitter ){
 						emitter.emit( "unknown-data" , data ) // just tell everyone we received something, but we don't know what to do with it
-					} )		
+					} )
 				}
 			}
 		}
@@ -123,7 +132,7 @@ module.exports     = function(app,config){
 		app.learnMode = "on"
 		app.emitters.forEach( function( emitter ) {
 			emitter.emit( "learn-mode-start" , { timeout : app.timeout } ) // propagete that we are ready to learn
-		} )	
+		} )
 		setTimeout( app.stopLearning , app.timeout * 1000 ) // make sure we stop learning after timeout
 	}
 
@@ -144,7 +153,7 @@ module.exports     = function(app,config){
 		app.forgetMode  = "on"
 		app.emitters.forEach( function( emitter ) {
 			emitter.emit( "forget-mode-start" , { timeout : app.timeout } ) // tell everyone we are in forget-mode
-		} )	
+		} )
 		setTimeout( app.stopForgetting , app.timeout * 1000 ) // make sure we leave stop mode after timeout
 	}
 
@@ -166,18 +175,18 @@ module.exports     = function(app,config){
 		// this can be used to update sensor info like desc and title...
 		knownSensors[ sensor.id ] = sensor // save the sensor under its id
 		app.learnMode = "off" // stop the learnMode in any case
-		app.emitters.forEach( function( emitter ) { 
+		app.emitters.forEach( function( emitter ) {
       		emitter.emit( "learn-mode-stop" , { code : 0 , reason : "success" } ) // tell everyone we are not in learn mode anymore
 		} )
 		fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {
 			// and actually save it to disc
     		if( err ) {
-				app.emitters.forEach( function( emitter ) { 
+				app.emitters.forEach( function( emitter ) {
       				emitter.emit( "learn-error" , { err : err, reason: "error saving sensor file to disk" } ) // there was an error saving the file
 				} )
     		} else {
     			// the file was successfully saved
-    			app.emitters.forEach( function( emitter ) { 
+    			app.emitters.forEach( function( emitter ) {
 					emitter.emit( "learned" , sensor ) // let's tell everyone we where successfull attach the sensor info of the sensor we just saved
 				} )
    			 }
@@ -186,7 +195,7 @@ module.exports     = function(app,config){
 
 	app.forget = function( id ) {
 		// actuall delete a sensor by its id
-		var tmp = "" 
+		var tmp = ""
 		if( knownSensors.hasOwnProperty( id ) ) {
 			tmp = knownSensors[ id ] // but befor we delete it, save the snsor info in a temporary variable
 			delete knownSensors[ id ] // delete the sensor from the knownSensor object (in memory)
@@ -198,7 +207,7 @@ module.exports     = function(app,config){
 		fs.writeFile( outFile , JSON.stringify( knownSensors, null, 4), function( err ) {
 			// actually save the changes to disk
     		if(err) {
-      			app.emitters.forEach( function( emitter ) { 
+      			app.emitters.forEach( function( emitter ) {
       				emitter.emit( "forget-error" , { err : err, reason: "error saving sensor file to disk" } ) // there was an error saving the file
 				} )
     		} else {
@@ -219,4 +228,3 @@ module.exports     = function(app,config){
 		return knownSensors
 	}
 }
-

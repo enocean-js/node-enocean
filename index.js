@@ -96,7 +96,7 @@ function SerialPortListener( config ) {
 	}
 
 	this.receive     = function( buf ) {
-		// handle the receiving of telegrams. thsi can be sued to simulate the recieving part... good for testing ;-)
+		// handle the receiving of telegrams. this can be used to simulate the recieving part... good for testing ;-)
 		var telegram = new Telegram( ) // create a new telegram
 		telegram.loadFromBuffer( buf ) // and fill it with the datat from the Buffer
 		this.emitters.forEach( function( emitter ) {

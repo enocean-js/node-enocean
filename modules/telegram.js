@@ -34,9 +34,9 @@ module.exports = function enocean_Telegram( ) {
 		var dataLength     = 255 * buf[ 1 ] + buf[ 2 ] // length of the Data Part of the telegram
 		var optionalLength = buf[ 3 ] // length of the optional data part of the telegram
 		this.packetType    = buf[ 4 ] // packet type ( 1=radio telegram , 2=response... )
-		var headerCRC      = buf[ 5 ] // checksum of the header 
+		var headerCRC      = buf[ 5 ] // checksum of the header
 		// TODO: should we perform a check against the checksum?
-		var rawDataByte    = buf.slice( 6 , dataLength + 6 ) // Data byte start at Byte 7 and end at 6 + dataLength 
+		var rawDataByte    = buf.slice( 7 , dataLength + 7 ) // Data byte start at Byte 7 and end at 6 + dataLength
 		switch( this.packetType ) {
 			case 2 :
 				// RESPONSES are not really supportet yet (2.0?) the only propper use here is for getting the base address
@@ -44,7 +44,7 @@ module.exports = function enocean_Telegram( ) {
 				this.returnCode       = buf[ 6 ]
 				var rc_string         = [ "RET_OK" , "RET_ERROR" , "RET_NOT_SUPPORTED" , "RET_WRONG_PARAM" , "RET_OPERATION_DENIED" ]
 				if( this.returnCode   < 128 ) { this.returnCodeString = rc_string[ this.returnCode ] }
-				if( dataLength       == 5 ) { 
+				if( dataLength       == 5 ) {
 				// not really correct, but for now assume that RESPNSES with a length of 5 contain the base address
 					this.base         = buf.slice( 7 , 11 ).toString( "hex" )
 				}
@@ -54,15 +54,15 @@ module.exports = function enocean_Telegram( ) {
 				// this is a RADIO telegram. senderId and choice are part of every radio telegram
 				this.senderId         = buf.slice( dataLength + 1 , dataLength + 5 ).toString( "hex" ) // should we rename this to sensorId? needs a bit of refactoring...
 				this.choice           = buf[ 6 ].toString( 16 ) // choice equals the RORG. for now 4BS (a5), RPS(f6) and 1BS(d5) are supported
-				switch( this.choice ) { 
-					case "a5" : 
+				switch( this.choice ) {
+					case "a5" :
 						// this is a 4BS (4 Byte Communication) Telegram. the data part is 4 bytes long
 						this.packetTypeString  = "4BS"
 						this.raw               = pad( buf.slice( 7 , 11 ).toString( "hex" ) , 8 ) // the data part as a hex string
 						var rawNr              = parseInt( buf.slice( 7 , 11 ).toString( "hex" ) , 16 ) // the data part as decimal number
 						//extract the learn bit
 						// Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
-						this.learnBit          = ( rawNr & 8 ) >>> 3 
+						this.learnBit          = ( rawNr & 8 ) >>> 3
 						// allways use zero fill bit shifts to prevent accidetial negative numbers, because in js INTs are signed
 						if( this.learnBit     == 0 ) {
 							 // the following extractions could be written shorter, but this way ist more clear what goes on
@@ -71,7 +71,7 @@ module.exports = function enocean_Telegram( ) {
 							var MANUFACTURERID = (   parseInt( "00000000000001111111111100000000" , 2 ) & rawNr ) >>> 8 // the next 11 bit contain the manufacturer id, leaving 8 bits (Byte0 of the telegram unused)
 							// convert the eep into a string of the form "a5-ff-tt" where ff is the func in hex and tt is the type in hex
 							// pad the values with leading zeros so the numbers are allways 2 digits
-							this.eep           = "a5-" + pad( func , 2 ) + "-" + pad( type , 2 ) 
+							this.eep           = "a5-" + pad( func , 2 ) + "-" + pad( type , 2 )
 							this.manufacturer  = Manufacturer_List[ MANUFACTURERID ] // look up the name of the manufacturer
 						}
 					break
@@ -84,16 +84,23 @@ module.exports = function enocean_Telegram( ) {
 					// this is a 1BS telegram. it also contains only one data byte, but it also carries a learn bit
 						this.raw               = pad( buf[ 7 ].toString( 16 ) , 2 ) // extract the data byte (Byte0) as a padded hex string
 						// Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
-						this.learnBit          = ( parseInt( this.raw , 16 ) & 8 ) >>> 3  
-						this.packetTypeString  = "1BS" 
-					break	
+						this.learnBit          = ( parseInt( this.raw , 16 ) & 8 ) >>> 3
+						this.packetTypeString  = "1BS"
+					break
+					case "d2" :
+					// this is a VLD telegram.
+						this.raw               = pad(rawDataByte.toString("hex"),dataLength*2 )// extract the data byte (Byte0) as a padded hex string
+						// Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
+						this.learnBit          = ( parseInt( this.raw , 16 ) & 8 ) >>> 3
+						this.packetTypeString  = "VLD"
+					break
 				}
 			break
 		}
 	}
 }
 // a helper function repeated here, so this module does not require anything
-function pad( num , size ) { // fill a string with leading zeros up to size 
+function pad( num , size ) { // fill a string with leading zeros up to size
     var s = "00000000000000000000000000000000" + num // maximum number of zero we need
     return s.substr( s.length - size ) // cut to size
 }
