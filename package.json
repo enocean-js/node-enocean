@@ -20,7 +20,7 @@
   "author": "Holger Will",
   "license": "ISC",
   "dependencies": {
-    "serialport": "^2.0.0"
+    "serialport": "^3.0.0"
   },
   "devDependencies": {
     "chai": "^3.3.0",
