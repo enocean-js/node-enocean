@@ -129,11 +129,11 @@ function SerialPortListener( config ) {
 		}
 	}.bind( this )
 
-	this.send = function( msg ) {
+	this.send = function( msg ,callback) {
 		// very simple send implemetation. expects a string (hex)
 		try{
 			var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
-			serialPort.write( buf1 ) // write it to the serial port
+			serialPort.write( buf1 , callback) // write it to the serial port
 			this.emitters.forEach( function( emitter ) {
 				emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
 			} )
