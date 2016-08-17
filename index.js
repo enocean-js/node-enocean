@@ -129,11 +129,11 @@ function SerialPortListener( config ) {
 		}
 	}.bind( this )
 
-	this.send = function( msg ,callback) {
+	this.send = function( msg ) {
 		// very simple send implemetation. expects a string (hex)
 		try{
 			var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
-			serialPort.write( buf1 , callback) // write it to the serial port
+			serialPort.write( buf1 ) // write it to the serial port
 			this.emitters.forEach( function( emitter ) {
 				emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
 			} )
@@ -143,7 +143,27 @@ function SerialPortListener( config ) {
 			} )
 		}
 	}
+	this.sendAsync = function( msg ) {
+			// very simple send implemetation. expects a string (hex)
+			var p = new Promise(function(resolve,reject){
+				try{
+					var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
+					serialPort.write( buf1 , function(err){
+							if(err){reject(err)}else{resolve()}
+					}) // write it to the serial port
+					this.emitters.forEach( function( emitter ) {
+						emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
+					} )
+				}catch(err){
+					this.emitters.forEach( function( emitter ) {
+						emitter.emit( "sent-error" , { err : err , msg : msg } ) // emit en error whe somthing went wrong
+					} )
+				}
 
+			}.bind(this))
+			return p
+
+		}
 	this.getBase = function(){
 		// code to get the base address ( 55 0001 00 05 70 08 38 )
 		// 55   = startbyte
