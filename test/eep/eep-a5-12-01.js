@@ -25,7 +25,3 @@ describe('a5-12-01', function() {
 
 		});
 });
-// 55000a0701eba50114da09ffecb3820001ffffffff4f00f3
-// 55000a0701eba500000019ffecb3820001ffffffff4f0089
-// 55000a0701eba500021c0cffecb3820001ffffffff520035
-// 55000a0701eba59903018fffecb3820001ffffffff5000ea
