@@ -1,8 +1,9 @@
-var enocean = require("../")(); 
+var enocean = require("../")();
 
-enocean.listen("/dev/ttyUSB0"); 
+enocean.listen("/dev/ttyUSB0");
 
 enocean.on("ready",function(){
+	enocean.timeout=120
 	enocean.startLearning()
 })
 
@@ -14,7 +15,7 @@ enocean.on("unknown-data",function(data){
 	console.log("unknown Data: ",data.rawByte)
 })
 
-enocean.on("unknown-teach-in",function(){
+enocean.on("unknown-teach-in",function(data){
 	console.log("unknown teach in: ",data)
 })
 
