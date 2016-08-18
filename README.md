@@ -79,6 +79,8 @@ the enocean object has a property called `.eepResolvers`. This is an array which
 * a5-06-xx
 * a5-07-01
 * a5-11-02
+* a5-12-01
+* d2-32-02
 
 I will add more when i need the or find the time to add some random ones. 
 **if you need a specific eep that is currently not supported, just let me know. It will be a pleasure to add them.**
