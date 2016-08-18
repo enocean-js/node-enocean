@@ -50,6 +50,9 @@ module.exports = {
 		var rawVal  = 0
 		var rawByte = parseInt(data,16)
 		switch(ByteNr){
+			case 0 :
+				rawVal = (rawByte & 0xff)
+			break
 			case 1 :
 				rawVal = (rawByte & 0xff00) >>> 8
 			break
@@ -70,6 +73,9 @@ module.exports = {
 		var rawVal  = 0
 		var rawByte = parseInt(data,16)
 		switch(ByteNr){
+			case 0 :
+				rawVal = (rawByte & 0xff)
+			break
 			case 1 :
 				rawVal = (rawByte & 0xff00) >>> 8
 			break
