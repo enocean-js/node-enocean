@@ -80,7 +80,8 @@ module.exports     = function(app,config){
 			// but it's a "teach in"-telegram, so it wants to tell us about itself
 				if( app.learnMode === "on" ) {
 				// we are in learnMode, so extract the sensor info frm the telegram
-				// and save tha info
+				// and save that info
+					if(data.choice==="d5") data.eep="d5-00-01" //its a 1BS Telegram there is currently only 1 defined so assume d5-00-01
 					app.learn( {
 						id           : data.senderId,
 						eep          : data.eep,
