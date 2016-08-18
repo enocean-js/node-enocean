@@ -131,7 +131,9 @@ function SerialPortListener( config ) {
 
 	this.send = function( msg ) {
 		// very simple send implemetation. expects a string (hex)
+
 		try{
+
 			var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
 			serialPort.write( buf1 ) // write it to the serial port
 			this.emitters.forEach( function( emitter ) {
