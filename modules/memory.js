@@ -49,7 +49,7 @@ module.exports     = function(app,config){
 				app.emitters.forEach(function(emitter){
 					emitter.emit("known-data",data) // and emmit an event propagating the extracted Data downstream
 				} )
-				knownSensors[ data.senderId ].last = data.values // aatch the just extracted Data to the sensrFile Entry of this sensor
+				replaceLastValues(knownSensors[ data.senderId ],data.values) // attach the just extracted Data to the sensrFile Entry of this sensor
 				fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {} ) // and save it to disk
 			} else {
 				// if it is a learn telegram, check if we are in "teach in"-mode
@@ -227,5 +227,27 @@ module.exports     = function(app,config){
 	app.getSensors = function( ) {
 		// return all known sensors
 		return knownSensors
+	}
+}
+function replaceLastValues(sensor,current){
+	console.log(sensor.last, current)
+	if(sensor.last && sensor.last.length==current.length){
+		last=sensor.last
+		for(var i=0;i<last.length;i++){
+			var l=last[i]
+			var c=current[i]
+			if(l.value!=c.value && c.value!=null){
+				l.value=c.value
+				l.lastModified=new Date()
+			}
+			if(l.type!=c.type){
+				l=c
+			}
+		}
+	}else{
+		for(var i=0;i<current.length;i++){
+			current.lastModified=new Date()
+		}
+		sensor.last=current
 	}
 }
