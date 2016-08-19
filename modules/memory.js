@@ -230,7 +230,6 @@ module.exports     = function(app,config){
 	}
 }
 function replaceLastValues(sensor,current){
-	console.log(sensor.last, current)
 	if(sensor.last && sensor.last.length==current.length){
 		last=sensor.last
 		for(var i=0;i<last.length;i++){
