@@ -35,10 +35,11 @@ module.exports     = function(app,config){
 			if(data.choice==="d2"){
 				data.sensor  = knownSensors[ data.senderId ]
 				data.values = app.getData( data.sensor.eep , data.raw )
+				knownSensors[ data.senderId ].last = data.values
 				app.emitters.forEach(function(emitter){
 					emitter.emit("known-data",data) // and emmit an event propagating the extracted Data downstream
 				} )
-				knownSensors[ data.senderId ].last = data.values
+
 				fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {} )
 			}
 			if( data.learnBit === 1 || data.choice === "f6" ) {
@@ -46,10 +47,11 @@ module.exports     = function(app,config){
 				var sensor  = knownSensors[ data.senderId ] // get the sensor Info like the eep and manufacurer Info from the memory file
 				data.sensor = sensor // aatch that info to the telegram data
 				data.values = app.getData( sensor.eep , data.raw ) // actually extract the Data
+				replaceLastValues(knownSensors[ data.senderId ],data.values) // attach the just extracted Data to the sensrFile Entry of this sensor
 				app.emitters.forEach(function(emitter){
 					emitter.emit("known-data",data) // and emmit an event propagating the extracted Data downstream
 				} )
-				replaceLastValues(knownSensors[ data.senderId ],data.values) // attach the just extracted Data to the sensrFile Entry of this sensor
+
 				fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {} ) // and save it to disk
 			} else {
 				// if it is a learn telegram, check if we are in "teach in"-mode
