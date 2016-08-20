@@ -92,6 +92,21 @@ function SerialPortListener( config ) {
 					}
 				}
 			}.bind( this ) ) // bind "this" to the enocean object
+			serialPort.on("error", function (error) {
+				this.emitters.forEach(function(emitter) {
+					emitter.emit("error", error)
+				});
+			}.bind(this));
+			serialPort.on("disconnect", function (error) {
+				this.emitters.forEach(function(emitter) {
+					emitter.emit("disconnect", error)
+				});
+			}.bind(this));
+			serialPort.on("close", function () {
+				this.emitters.forEach(function(emitter) {
+					emitter.emit("close")
+				});
+			}.bind(this));
 		}.bind( this ) ) // bind "this" to the enocean objec
 	}
 
