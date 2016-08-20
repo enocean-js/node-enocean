@@ -148,3 +148,7 @@ the configFile must contain a base address. If you dont know your base address, 
 base:"00000000"
 }
 ```
+
+special thanks for supporting this project:
+
+Collin Payne [complyNC](http://www.complync.com/)
