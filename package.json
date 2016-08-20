@@ -20,7 +20,8 @@
   "author": "Holger Will",
   "license": "ISC",
   "dependencies": {
-    "serialport": "^3.0.0"
+    "serialport": "^3.0.0",
+    "serialport-enocean-parser": "0.0.2"
   },
   "devDependencies": {
     "chai": "^3.3.0",

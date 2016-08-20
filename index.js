@@ -20,7 +20,7 @@ var Telegram     = require( "./modules/telegram.js" )
 var crc          = require( "./modules/crc.js" )
 var Memory       = require( "./modules/memory.js" )
 var eepDesc      = require("./modules/eepDesc.js")
-
+var parser       = require("serialport-enocean-parser")
 function SerialPortListener( config ) {
 	// read the config object passed to the constructor. fill the non existin fileds with defaults
 	this.timeout        = config.timeout ? config.timeout : 60 // set the timeout for tech in and forget auto mode to 60 s if not otehrwise specified
@@ -52,7 +52,7 @@ function SerialPortListener( config ) {
 		// use /dev/ttyUSBx for USB Sticks
 		// use /dev/ttyAMA0 for enocean pi
 		// use /dev/COM1 for USB Sticks on Windows
-		serialPort      = new SerialPort( port , { baudrate: 57600 } )
+		serialPort      = new SerialPort( port , { baudrate: 57600 , parser: parser } )
 		serialPort.on( "open" , function( ) {
 			// when the serial port successfully opend
 			this.mem    = new Memory( this , { sensorFilePath : this.sensorFilePath } ) // initialize the Memory implementation used for learning an forgetting sensors. all meaningfull events are emitted there
@@ -65,32 +65,46 @@ function SerialPortListener( config ) {
 				} )
 			}
 			serialPort.on( 'data' ,function( data ) {
+	// 			syncByte: 85,
+  // header: { dataLength: 5, optionalLength: 1, packetType: 2 },
+  // crc8Header: 219,
+  // data: <Buffer 00 ff a0 87 00>,
+  // optionalData: <Buffer 09>,
+  // crc8Data: 228 }
+				var l = this.pad(parseInt(data.header.dataLength,16),4)
+				var ol = this.pad(parseInt(data.header.optionalLength,16),2)
+				var typ = this.pad(parseInt(data.header.packetType,16),2)
+				var crc1 =  this.pad(parseInt(data.crc8Header,16),2)
+				var crc2 =  this.pad(parseInt(data.crc8Data,16),2)
+				var tel =`55${l}${ol}${typ}${crc1}${data.data.toString("hex")}${data.optionalData.toString("hex")}${crc2}`
+				var buf=new Buffer(tel,"hex")
+				this.receive(buf)
 				// when recieving data from the serialport, we dont receive complete telegrams, but jsut chuck of them.
-				var buf    = new Buffer( data ) // store the chung we just got in a buffer
-				if( buf[ 0 ] == 0x55 ) {  // we are at the beginning of a telegram
-					tmp                     = ""
-					var length              = 255 * buf[ 1 ] + buf[ 2 ]  // the length of the data part
-					var optionalLength      = buf[ 3 ] // optional length
-					var totalExpectedLength = length + optionalLength + 6 + 1 // total lengh of package (+6 header length, +1 crc checksum)
-					// there is still the remote chance that we receive the starbyte, but not the complete header.
-					// TODO: find out how to handle these cases
-					tmp = data // store the telegram in a temporary variable
-					if( buf.length == totalExpectedLength ) { // if we receive the complete telegram in one go.
-						this.receive( buf ) // handle the receiving of the telegram
-					}
-				}else{
-					// We are in the middle of a telegram. there should be something in the tmp buffer already. if not skip all data until wi get a header
-					if( tmp != null ) { // if we already have received some parts
-						tmp                     = Buffer.concat( [ tmp , data ] ) // concatenate the buffers
-						buf                     = new Buffer( tmp ) // to a new Buffer
-						var length              = 255 * buf[ 1 ] + buf[ 2 ] // the length of the data part
-						var optionalLength      = buf[ 3 ] // optional length
-						var totalExpectedLength = length + optionalLength + 6 + 1  //total lengh of package (+6 header length, +1 crc checksum)
-						if( buf.length == totalExpectedLength ) { //if we receive the complete telegram , fill the data structure with it
-							this.receive(buf) // handle the receiving of the telegram
-						}
-					}
-				}
+				//var buf    = new Buffer( data ) // store the chung we just got in a buffer
+				// if( buf[ 0 ] == 0x55 ) {  // we are at the beginning of a telegram
+				// 	tmp                     = ""
+				// 	var length              = 255 * buf[ 1 ] + buf[ 2 ]  // the length of the data part
+				// 	var optionalLength      = buf[ 3 ] // optional length
+				// 	var totalExpectedLength = length + optionalLength + 6 + 1 // total lengh of package (+6 header length, +1 crc checksum)
+				// 	// there is still the remote chance that we receive the starbyte, but not the complete header.
+				// 	// TODO: find out how to handle these cases
+				// 	tmp = data // store the telegram in a temporary variable
+				// 	if( buf.length == totalExpectedLength ) { // if we receive the complete telegram in one go.
+				// 		this.receive( buf ) // handle the receiving of the telegram
+				// 	}
+				// }else{
+				// 	// We are in the middle of a telegram. there should be something in the tmp buffer already. if not skip all data until wi get a header
+				// 	if( tmp != null ) { // if we already have received some parts
+				// 		tmp                     = Buffer.concat( [ tmp , data ] ) // concatenate the buffers
+				// 		buf                     = new Buffer( tmp ) // to a new Buffer
+				// 		var length              = 255 * buf[ 1 ] + buf[ 2 ] // the length of the data part
+				// 		var optionalLength      = buf[ 3 ] // optional length
+				// 		var totalExpectedLength = length + optionalLength + 6 + 1  //total lengh of package (+6 header length, +1 crc checksum)
+				// 		if( buf.length == totalExpectedLength ) { //if we receive the complete telegram , fill the data structure with it
+				// 			this.receive(buf) // handle the receiving of the telegram
+				// 		}
+				// 	}
+				// }
 			}.bind( this ) ) // bind "this" to the enocean object
 			serialPort.on("error", function (error) {
 				this.emitters.forEach(function(emitter) {
@@ -113,7 +127,7 @@ function SerialPortListener( config ) {
 	this.receive     = function( buf ) {
 		// handle the receiving of telegrams. this can be used to simulate the recieving part... good for testing ;-)
 		var telegram = new Telegram( ) // create a new telegram
-		telegram.loadFromBuffer( buf ) // and fill it with the datat from the Buffer
+		telegram.loadFromBuffer( buf ) // and fill it with the data from the Buffer
 		this.emitters.forEach( function( emitter ) {
 			emitter.emit( "data" , telegram ) // tell everyone we've got a telegram
 		} )
