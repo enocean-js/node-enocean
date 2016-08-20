@@ -32,16 +32,15 @@ module.exports     = function(app,config){
 	app.on( "data" , function( data ) {
 		if ( knownSensors.hasOwnProperty( data.senderId )) {
 			//if sensor is known, extract the content of the Data Bits.
-			if(data.choice==="d2"){
-				data.sensor  = knownSensors[ data.senderId ]
-				data.values = app.getData( data.sensor.eep , data.raw )
-				knownSensors[ data.senderId ].last = data.values
-				app.emitters.forEach(function(emitter){
-					emitter.emit("known-data",data) // and emmit an event propagating the extracted Data downstream
-				} )
-
-				fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {} )
-			}
+			// if(data.choice==="d2"){
+			// 	data.sensor  = knownSensors[ data.senderId ]
+			// 	data.values = app.getData( data.sensor.eep , data.raw )
+			// 	knownSensors[ data.senderId ].last = data.values
+			// 	app.emitters.forEach(function(emitter){
+			// 		emitter.emit("known-data",data) // and emmit an event propagating the extracted Data downstream
+			// 	} )
+			// 	fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {} )
+			// }
 			if( data.learnBit === 1 || data.choice === "f6" ) {
 				// but only if it is not a learn Telegram (learnBit==1)
 				var sensor  = knownSensors[ data.senderId ] // get the sensor Info like the eep and manufacurer Info from the memory file
