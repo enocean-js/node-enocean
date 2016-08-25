@@ -26,7 +26,12 @@ function SerialPortListener( config ) {
 	this.timeout        = config.timeout ? config.timeout : 60 // set the timeout for tech in and forget auto mode to 60 s if not otehrwise specified
 	this.configFilePath = config.configFilePath ? config.configFilePath : __dirname + "/config.json" // use the default config file. its recommended to use your own especially when hacking on this module.
 	this.sensorFilePath = config.sensorFilePath ? config.sensorFilePath : __dirname + "/modules/knownSensors.json" // same goes for the sensor file in which learnd sensors are stored
-
+	if(!fs.existsSync(this.configFilePath)){
+		fs.writeFileSync(this.configFilePath,'{"base":"00000000"}')
+	}
+	if(!fs.existsSync(this.sensorFilePath)){
+		fs.writeFileSync(this.sensorFilePath,'{}')
+	}
 	var configFile      = require(this.configFilePath) // load the config file
 	this.base           = configFile.base // load the base address stored in the config file. It should be initialized with "00000000"
 

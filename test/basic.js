@@ -32,7 +32,7 @@ describe('enocean(basic)', function() {
       assert.equal(eno.configFilePath,path.resolve("./config.json"))
       assert.equal(eno.sensorFilePath,path.resolve("./modules/knownSensors.json"))
   	});
-    it('should be invocable with a config Object', function () { 
+    it('should be invocable with a config Object', function () {
       assert.doesNotThrow(function(){eno=en({})})
       eno=en({timeout:30})
       assert.equal(eno.timeout,30)
@@ -54,7 +54,7 @@ describe('enocean(basic)', function() {
     	eno.on("ready",function(){
     		eno.close(function(){done()})
     	})
-  	});	
+  	});
   	it('should have a base address by now', function () {
     	assert(eno.base.length===8 && eno.base!=="00000000")
   	});
@@ -70,7 +70,7 @@ describe('enocean(basic)', function() {
         assert.equal(data.id,"0006d1a6")
         done()
       })
-      
+
     });
     it('should give acces to info from known sensors', function () {
       var info=eno.info("0006d1a6")
@@ -103,7 +103,7 @@ describe('enocean(basic)', function() {
       eno.on("ready",function(){
       	 eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2","hex"))
       })
-      
+
     });
     it('should save the last telegram of known sensors', function () {
       var info=eno.info("0006d1a6")

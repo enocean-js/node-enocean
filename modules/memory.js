@@ -22,9 +22,13 @@
 var fs             = require("fs")
 var knownSensors   = ""
 module.exports     = function(app,config){
+	this.timerId=null
 	if( config    == undefined) config = {} // check if this was called with a config or not
-	// if a path to the sensorFile was provided use taht, otherwise use the default
+	// if a path to the sensorFile was provided use that, otherwise use the default
 	var outFile    = config.hasOwnProperty( "sensorFilePath" ) ? config.sensorFilePath : __dirname + '/knownSensors.json'
+	if(!fs.existsSync(outFile)){
+		fs.writeFileSync(outFile,"{}")
+	}
 	knownSensors   = require( outFile ) // load the sensorFile
 	app.learnMode  = "off"
 	app.forgetMode = "off"
@@ -135,7 +139,7 @@ module.exports     = function(app,config){
 		app.emitters.forEach( function( emitter ) {
 			emitter.emit( "learn-mode-start" , { timeout : app.timeout } ) // propagete that we are ready to learn
 		} )
-		setTimeout( app.stopLearning , app.timeout * 1000 ) // make sure we stop learning after timeout
+		this.timerId=setTimeout( app.stopLearning , app.timeout * 1000 ) // make sure we stop learning after timeout
 	}
 
 	app.stopLearning       = function( ) {
@@ -143,6 +147,7 @@ module.exports     = function(app,config){
 		if( app.learnMode == "on" ) {
 			// but only if we are still in leranMode
 			app.learnMode  =" off"
+			clearTimeout(this.timerId)
 			app.emitters.forEach( function( emitter ) {
 				emitter.emit( "learn-mode-stop" , { code : 2 , reason : "timeout" } ) // tell everyone we are not in teach in anymore
 			} )
@@ -156,7 +161,7 @@ module.exports     = function(app,config){
 		app.emitters.forEach( function( emitter ) {
 			emitter.emit( "forget-mode-start" , { timeout : app.timeout } ) // tell everyone we are in forget-mode
 		} )
-		setTimeout( app.stopForgetting , app.timeout * 1000 ) // make sure we leave stop mode after timeout
+		this.timerId=setTimeout( app.stopForgetting , app.timeout * 1000 ) // make sure we leave stop mode after timeout
 	}
 
 	app.stopForgetting      = function( ) {
@@ -164,6 +169,7 @@ module.exports     = function(app,config){
 		if( app.forgetMode == "on" ) {
 			// but only if we are in forget Mode
 			app.forgetMode  = "off"
+			clearTimeout(this.timerId)
 			app.emitters.forEach( function( emitter ) {
 				emitter.emit( "forget-mode-stop" , { code : 2 , reason : "timeout" } ) // tell everyone we are not in forget mode anymore
 			} )
@@ -177,6 +183,7 @@ module.exports     = function(app,config){
 		// this can be used to update sensor info like desc and title...
 		knownSensors[ sensor.id ] = sensor // save the sensor under its id
 		app.learnMode = "off" // stop the learnMode in any case
+		clearTimeout(this.timerId)
 		app.emitters.forEach( function( emitter ) {
       		emitter.emit( "learn-mode-stop" , { code : 0 , reason : "success" } ) // tell everyone we are not in learn mode anymore
 		} )
@@ -203,6 +210,7 @@ module.exports     = function(app,config){
 			delete knownSensors[ id ] // delete the sensor from the knownSensor object (in memory)
 		}
 		app.forgetMode="off" // stop forget Mode
+		clearTimeout(this.timerId)
 		app.emitters.forEach( function( emitter ) {
 			emitter.emit( "forget-mode-stop" , { code : 0 , reason:"success"} ) // and tell the "world" we stoped forget mode
 		} )
