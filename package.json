@@ -21,7 +21,7 @@
   "license": "ISC",
   "dependencies": {
     "serialport": "^3.0.0",
-    "serialport-enocean-parser": "0.0.2"
+    "serialport-enocean-parser": "^0.1.0"
   },
   "devDependencies": {
     "chai": "^3.3.0",
