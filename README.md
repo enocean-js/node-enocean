@@ -152,7 +152,7 @@ to make it easier to send Data, there are separate modules that implement certai
 
 * [node-enocean-button](https://github.com/Holger-Will/node-enocean-button) sends Button states with the eep f6-03-02
 * [node-enocean-dimmer](https://github.com/Holger-Will/node-enocean-dimmer) sends dimmer states compatible to eltako (similar to a5-38-09)
-* [node-enocean-lightscene](https://github.com/Holger-Will/node-enocean-dimmer) sends both of the above plus a delay command in any combination.
+* [node-enocean-lightscene](https://github.com/Holger-Will/node-enocean-lightscene) sends both of the above plus a delay command in any combination.
 
 to find out how to use them, see the examples in the example folder here or in the other modules repository.
 
