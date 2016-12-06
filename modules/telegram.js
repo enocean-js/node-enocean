@@ -78,6 +78,7 @@ M[0x3E]="GIGA_CONCEPT"
 M[0x3F]="SENSORTEC"
 M[0x40]="JAEGER_DIREKT"
 M[0x41]="AIR_SYSTEM_COMPONENTS_INC"
+M[0x46]="NODON"
 M[0x7F]="MULTI_USER_MANUFACTURER"
 var Manufacturer_List = M
 // [ // the List of Manufacturers. the index is equal to the number transmitted in learn telegrams
