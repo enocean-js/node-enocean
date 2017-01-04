@@ -7,7 +7,7 @@ var enocean = require( "../" )();  // require node-enocen
 enocean.listen( "/dev/ttyUSB0" );
 enocean.on( "data" , function( data ) {   // a telegram has been received
 
-  if(data.choice=="d2" || data.choice=="d4"){
+  if(data.choice=="d2" || data.choice=="d4" || data.choice=="d1" || data.senderId=="0006be37"){
   	console.log( data )               // log it to the console
   }
 });

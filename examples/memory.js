@@ -8,6 +8,7 @@ enocean.on("ready",function(){
 })
 
 enocean.on("known-data",function(data){
+
 	console.log("known Data:", data)
 })
 
