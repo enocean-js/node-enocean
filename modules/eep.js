@@ -34,4 +34,6 @@ eep.push(require("./eep/eep-a5-12-01.js"))
 eep.push(require("./eep/eep-a5-30-01.js"))
 // VLD
 eep.push(require("./eep/eep-d2-32-02.js"))
+// MSC
+eep.push(require("./eep/eep-d1-03-cx.js"))
 module.exports = eep
