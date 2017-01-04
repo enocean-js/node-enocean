@@ -73,7 +73,7 @@ M[0x36]="TIANSU_AUTOMATION_CONTROL_SYSTE_CO_LTD"
 M[0x38]="GRUPPO_GIORDANO_IDEA_SPA"
 M[0x39]="ALPHAEOS_AG"
 M[0x3A]="TAG_TECHNOLOGIES"
-M[0x3C]="CLOUD_BUILDINGS_LTD"
+M[0x3C]="PRESSAC"
 M[0x3E]="GIGA_CONCEPT"
 M[0x3F]="SENSORTEC"
 M[0x40]="JAEGER_DIREKT"
@@ -92,6 +92,7 @@ var Manufacturer_List = M
 // 	]
 
 module.exports = function enocean_Telegram( ) {
+	this.timestamp = Date.now()
 	this.loadFromBuffer    = function( buf ) {
 		this.rawByte       = buf.toString( "hex" ) // store the original Buffer as a string in .rawByte
 		var dataLength     = 255 * buf[ 1 ] + buf[ 2 ] // length of the Data Part of the telegram
@@ -156,6 +157,21 @@ module.exports = function enocean_Telegram( ) {
 						// Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
 						this.learnBit          = 1
 						this.packetTypeString  = "VLD"
+					break
+					case "d1" :
+					// this is a MSC telegram.
+					console.log("--------------------------------------------------------------------------------------------------------------------------------------")
+						this.raw               = pad(rawDataByte.toString("hex"),dataLength*2 )// extract the data byte (Byte0) as a padded hex string
+						// Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
+						this.learnBit          = rawDataByte[dataLength-1] & 8
+						if(this.learnBit==0){
+							var func = pad(rawDataByte[0].toString(16),2)
+							var type = pad(rawDataByte[1].toString(16),2)
+							this.eep = `d1-${func}-${type}`
+							this.manufacturerid=parseInt("0x"+func+""+type[0])
+							this.manufacturer=Manufacturer_List[parseInt("0x"+func+""+type[0])]
+						}
+						this.packetTypeString  = "MSC"
 					break
 					case "d4" :
 					// this is an UTE Telegram (Universal Teach In)
