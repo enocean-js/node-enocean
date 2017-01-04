@@ -45,7 +45,7 @@ module.exports     = function(app,config){
 			// 	} )
 			// 	fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {} )
 			// }
-			if( data.learnBit === 1 || data.choice === "f6" ) {
+			if( data.learnBit === 1 || data.choice === "f6" || data.choice === "d1") {
 				// but only if it is not a learn Telegram (learnBit==1)
 				var sensor  = knownSensors[ data.senderId ] // get the sensor Info like the eep and manufacurer Info from the memory file
 				data.sensor = sensor // aatch that info to the telegram data
