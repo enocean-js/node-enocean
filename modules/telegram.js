@@ -100,8 +100,6 @@ module.exports = function enocean_Telegram( ) {
 		this.packetType    = buf[ 4 ] // packet type ( 1=radio telegram , 2=response... )
 		var headerCRC      = buf[ 5 ] // checksum of the header
 		var rawDataByte    = buf.slice( 7 , dataLength + 7 ) // Data byte start at Byte 7 and end at 6 + dataLength
-		
-
 		switch( this.packetType ) {
 			case 2 :
 				// RESPONSES are not really supportet yet (2.0?) the only propper use here is for getting the base address
@@ -111,7 +109,7 @@ module.exports = function enocean_Telegram( ) {
 				if( this.returnCode   < 128 ) { this.returnCodeString = rc_string[ this.returnCode ] }
 				if( dataLength       == 5 ) {
 				// not really correct, but for now assume that RESPNSES with a length of 5 contain the base address
-					this.base         = buf.slice( 7 , 11 ).toString( "hex" )
+					this.base           = buf.slice( 7 , 11 ).toString( "hex" )
 				}
 				this.raw              = rawDataByte
 			break
@@ -119,6 +117,11 @@ module.exports = function enocean_Telegram( ) {
 				// this is a RADIO telegram. senderId and choice are part of every radio telegram
 				this.senderId         = buf.slice( dataLength + 1 , dataLength + 5 ).toString( "hex" ) // should we rename this to sensorId? needs a bit of refactoring...
 				this.choice           = buf[ 6 ].toString( 16 ) // choice equals the RORG. for now 4BS (a5), RPS(f6) and 1BS(d5) are supported
+				var optionalData      = buf.slice(dataLength+6,buf.length-1)
+				this.subTelNum        = optionalData[0]
+				this.destinationId    = optionalData.slice(1,5).toString("hex")
+				this.rssi             = optionalData[5]
+				this.securityLevel    = optionalData[6]
 				switch( this.choice ) {
 					case "a5" :
 						// this is a 4BS (4 Byte Communication) Telegram. the data part is 4 bytes long
