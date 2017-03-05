@@ -7,9 +7,10 @@ enocean.on("ready",function(){
 	enocean.startLearning()
 })
 
-enocean.on("known-data",function(data){
+enocean.on("known-data",async function(data){
 
 	console.log("known Data:", data)
+	console.log("last value:", await enocean.getLastValues( data.senderId))
 })
 
 enocean.on("unknown-data",function(data){
