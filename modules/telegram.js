@@ -99,8 +99,9 @@ module.exports = function enocean_Telegram( ) {
 		var optionalLength = buf[ 3 ] // length of the optional data part of the telegram
 		this.packetType    = buf[ 4 ] // packet type ( 1=radio telegram , 2=response... )
 		var headerCRC      = buf[ 5 ] // checksum of the header
-		// TODO: should we perform a check against the checksum?
 		var rawDataByte    = buf.slice( 7 , dataLength + 7 ) // Data byte start at Byte 7 and end at 6 + dataLength
+		
+
 		switch( this.packetType ) {
 			case 2 :
 				// RESPONSES are not really supportet yet (2.0?) the only propper use here is for getting the base address
@@ -160,7 +161,6 @@ module.exports = function enocean_Telegram( ) {
 					break
 					case "d1" :
 					// this is a MSC telegram.
-					console.log("--------------------------------------------------------------------------------------------------------------------------------------")
 						this.raw               = pad(rawDataByte.toString("hex"),dataLength*2 )// extract the data byte (Byte0) as a padded hex string
 						// Bit 3 (so the 4th Bit) (0b1000=8) is the learnBit. if it is 0 (f.e. 10111) then this is a learn telegram
 						this.learnBit          = rawDataByte[dataLength-1] & 8

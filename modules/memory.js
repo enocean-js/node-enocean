@@ -20,7 +20,9 @@
 //     this implementation uses the fiesystem to stor sensor info
 
 var fs             = require("fs")
+var level          = require("level")
 var knownSensors   = ""
+var db             = level("./memory",{valueEncoding:'json'})
 module.exports     = function(app,config){
 	this.timerId=null
 	if( config    == undefined) config = {} // check if this was called with a config or not
@@ -48,9 +50,9 @@ module.exports     = function(app,config){
 			if( data.learnBit === 1 || data.choice === "f6" || data.choice === "d1") {
 				// but only if it is not a learn Telegram (learnBit==1)
 				var sensor  = knownSensors[ data.senderId ] // get the sensor Info like the eep and manufacurer Info from the memory file
-				data.sensor = sensor // aatch that info to the telegram data
+				data.sensor = sensor // attach that info to the telegram data
 				data.values = app.getData( sensor.eep , data.raw ) // actually extract the Data
-				replaceLastValues(knownSensors[ data.senderId ],data.values) // attach the just extracted Data to the sensrFile Entry of this sensor
+				db.put(data.senderId ,data,function(err){}) // store this Telegram in memory
 				app.emitters.forEach(function(emitter){
 					emitter.emit("known-data",data) // and emmit an event propagating the extracted Data downstream
 				} )
@@ -228,34 +230,24 @@ module.exports     = function(app,config){
 		} )
 	}
 
-	app.info = function( id ) {
+	app.info = async function ( id ) {
 		// get info of a specific sensor
-		return knownSensors[ id ]
+		var sensor = knownSensors[ id ]
+		return sensor
 	}
-
+	app.getLastValues = async function(id){
+		return await getLastData(id)
+	}
 	app.getSensors = function( ) {
 		// return all known sensors
 		return knownSensors
 	}
 }
-function replaceLastValues(sensor,current){
-	if(sensor.last && sensor.last.length==current.length){
-		last=sensor.last
-		for(var i=0;i<last.length;i++){
-			var l=last[i]
-			var c=current[i]
-			if(l.value!=c.value && c.value!=null){
-				l.value=c.value
-				l.lastModified=new Date()
-			}
-			if(l.type!=c.type){
-				l=c
-			}
-		}
-	}else{
-		for(var i=0;i<current.length;i++){
-			current.lastModified=new Date()
-		}
-		sensor.last=current
-	}
+
+function getLastData(id){
+	return new Promise(function(resolve,reject){
+		db.get(id,function(err,value){
+			if(err){reject(err)}else{resolve(value)}
+		})
+	})
 }

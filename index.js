@@ -223,6 +223,9 @@ function SerialPortListener( config ) {
 		socket.on( "get-sensor-info" , function( id ) {
 			socket.emit("sensors-info", this.info( id ) ) // returns info for one single sensor
 		}.bind( this) )
+		socket.on( "get-last-sensor-value" , async function( id ) {
+			socket.emit("last-sensors-value", await this.getLastValues( id ) ) // returns info for one single sensor
+		}.bind( this) )
 	}
 }
 
