@@ -3,6 +3,9 @@
   "version": "2.0.0",
   "description": "full implementation of the enocean protocol (ESP3 + EEP2.6)",
   "main": "index.js",
+  "engines": {
+    "node": ">=7.0.0" 
+  },
   "scripts": {
     "test": "mocha --recursive"
   },
