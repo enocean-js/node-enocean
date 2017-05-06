@@ -230,7 +230,7 @@ module.exports     = function(app,config){
 		} )
 	}
 
-	app.info = async function ( id ) {
+	app.info = function ( id ) {
 		// get info of a specific sensor
 		var sensor = knownSensors[ id ]
 		return sensor
