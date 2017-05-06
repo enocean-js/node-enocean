@@ -72,7 +72,7 @@ describe('enocean(basic)', function() {
       })
 
     });
-    it('should give acces to info from known sensors', function () {
+    it('should give access to info from known sensors', function () {
       var info=eno.info("0006d1a6")
       assert.equal(info.id,"0006d1a6")
       assert.equal(info.eep,"a5-02-14")
@@ -105,10 +105,13 @@ describe('enocean(basic)', function() {
       })
 
     });
-    it('should save the last telegram of known sensors', function () {
-      var info=eno.info("0006d1a6")
-      assert.equal(info.last[0].type,"Temperature");
-      assert.equal(info.last[0].value,"23.607843137254903");
+    it('should save the last telegram of known sensors', function (done) {
+			var data = eno.getLastValues("0006d1a6").then(function(data){
+				assert.equal(data.values[0].type,"Temperature");
+	      assert.equal(data.values[0].value,"23.607843137254903");
+				done()
+			})
+
     });
 
     it('should be able to forget learned sensors', function () {
