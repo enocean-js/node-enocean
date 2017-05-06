@@ -15,6 +15,7 @@
 var eep = []
 // RPS
 eep.push(require("./eep/eep-f6-02-03.js"))
+eep.push(require("./eep/eep-f6-10-00.js"))
 // 1BS
 eep.push(require("./eep/eep-d5-00-01.js"))
 //  4BS
