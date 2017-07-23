@@ -20,6 +20,7 @@ var Telegram     = require( "./modules/telegram.js" )
 var crc          = require( "./modules/crc.js" )
 var Memory       = require( "./modules/memory.js" )
 var eepDesc      = require("./modules/eepDesc.js")
+var decode       = require("./modules/genericResolver.js")
 var parser       = require("serialport-enocean-parser")
 function SerialPortListener( config ) {
 	// read the config object passed to the constructor. fill the non existin fileds with defaults
@@ -179,7 +180,12 @@ function SerialPortListener( config ) {
 			if( state !== "ready" ) this.send( "5500010005700838" )
 		}.bind( this ) , 1000 )
 	}
-
+	this.getData2 = function(eep,data){
+		var ret2 = decode(data.substring(12,data.length),eep)
+		if( ret2 !== null ) {
+			return ret2
+		}
+	}
 	this.getData = function( eep , data ) {
 		// used to read data from known telegrams
 		// can be used as a utilty externaly
@@ -189,10 +195,13 @@ function SerialPortListener( config ) {
 		for( var i = 0 ; i < this.eepResolvers.length ; i++ ) { // loop through all eepResolvers
 			 ret = this.eepResolvers[i]( eep , data ) // try to decode the data
 			 if( ret !== null ) {
-			 	return ret // if a resolver returns somthing other than null, we have an answer. return it and be done
+				//var ret2=decode(data,eep)
+				//console.log(data)
+			 	return ret // if a resolver returns something other than null, we have an answer. return it and be done
 			 	// if not try next.
 			 }
 		}
+
 		// we obviuosly dont have an implementation for this eep yet. return an unknown value
 		return [ {
 			type : "unknown" ,
