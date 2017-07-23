@@ -1,3 +1,5 @@
 node_modules/
 config.json
 modules/knownSensors.json
+/memory
+package-lock.json

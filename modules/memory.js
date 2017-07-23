@@ -19,10 +19,11 @@
 //     this module implements saving and deleting sensors as well as hanbling telegrams from known sensor
 //     this implementation uses the fiesystem to stor sensor info
 
+var path = require("path")
 var fs             = require("fs")
 var level          = require("level")
 var knownSensors   = ""
-var db             = level("./memory",{valueEncoding:'json'})
+var db             = level(path.join(__dirname,"../memory"),{valueEncoding:'json'})
 module.exports     = function(app,config){
 	this.timerId=null
 	if( config    == undefined) config = {} // check if this was called with a config or not
