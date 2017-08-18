@@ -61,7 +61,7 @@ function SerialPortListener( config ) {
 		serialPort      = new SerialPort( port , { baudrate: 57600 , parser: parser, autoOpen: false } )
 		serialPort.on("error", function (error) {console.log(error)});
 		serialPort.open(function(err, result ) {
-
+			console.log("hallo")
 			if (err) {
 				console.log(err);
 				this.emitters.forEach(function(emitter) {
@@ -159,7 +159,7 @@ function SerialPortListener( config ) {
 					if (serialPort.isOpen()){
 						var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
 						serialPort.write( buf1 , function(err){
-								if(err){reject(err)}else{resolve()}
+								serialPort.drain(err=>{if(err){reject(err)}else{resolve()}})
 						}) // write it to the serial port
 						this.emitters.forEach( function( emitter ) {
 							emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
