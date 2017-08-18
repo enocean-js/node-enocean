@@ -59,6 +59,7 @@ function SerialPortListener( config ) {
 		// use /dev/ttyAMA0 for enocean pi
 		// use /dev/COM1 for USB Sticks on Windows
 		serialPort      = new SerialPort( port , { baudrate: 57600 , parser: parser } )
+		serialPort.on("error", function (error) {console.log(error)});
 		serialPort.on( "open" , function( ) {
 			// when the serial port successfully opend
 			this.mem    = new Memory( this , { sensorFilePath : this.sensorFilePath } ) // initialize the Memory implementation used for learning an forgetting sensors. all meaningfull events are emitted there
