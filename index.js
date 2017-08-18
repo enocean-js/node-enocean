@@ -13,7 +13,7 @@
 //     You should have received a copy of the GNU General Public License
 //     along with node-enocean.  If not, see <http://www.gnu.org/licenses/>.
 
-var SerialPort   = require( "serialport" ).SerialPort
+var SerialPort   = require( "serialport" )
 var EventEmitter = require( 'events' ).EventEmitter
 var fs           = require( "fs" )
 var Telegram     = require( "./modules/telegram.js" )
@@ -58,37 +58,45 @@ function SerialPortListener( config ) {
 		// use /dev/ttyUSBx for USB Sticks
 		// use /dev/ttyAMA0 for enocean pi
 		// use /dev/COM1 for USB Sticks on Windows
-		serialPort      = new SerialPort( port , { baudrate: 57600 , parser: parser } )
+		serialPort      = new SerialPort( port , { baudrate: 57600 , parser: parser, autoOpen: false } )
 		serialPort.on("error", function (error) {console.log(error)});
-		serialPort.on( "open" , function( ) {
-			// when the serial port successfully opend
-			this.mem    = new Memory( this , { sensorFilePath : this.sensorFilePath } ) // initialize the Memory implementation used for learning an forgetting sensors. all meaningfull events are emitted there
-			if( configFile.base === "00000000" || !configFile.hasOwnProperty( "base" ) ) { // if we dont know the base address yet
-				this.getBase( ) // get the base address from the attached device
-			} else { // if we know the base address
-				state   = "ready" // part of the getBase Hack
-				this.emitters.forEach( function( emitter ) {
-					emitter.emit( "ready" ) // emit the ready event. we are now ready to receive and send telegrams
-				} )
+		serialPort.open(function(err, result ) {
+
+			if (err) {
+				console.log(err);
+				this.emitters.forEach(function(emitter) {
+					emitter.emit("error", err)
+				});
+			} else {
+				// when the serial port successfully opened
+				this.mem    = new Memory( this , { sensorFilePath : this.sensorFilePath } ) // initialize the Memory implementation used for learning an forgetting sensors. all meaningfull events are emitted there
+				if( configFile.base === "00000000" || !configFile.hasOwnProperty( "base" ) ) { // if we dont know the base address yet
+					this.getBase( ) // get the base address from the attached device
+				} else { // if we know the base address
+					state   = "ready" // part of the getBase Hack
+					this.emitters.forEach( function( emitter ) {
+						emitter.emit( "ready" ) // emit the ready event. we are now ready to receive and send telegrams
+					} )
+				}
+				serialPort.on( 'data' ,function( data ) {
+					this.receive(data.getRawBuffer())
+				}.bind( this ) ) // bind "this" to the enocean object
+				serialPort.on("error", function (error) {
+					this.emitters.forEach(function(emitter) {
+						emitter.emit("error", error)
+					});
+				}.bind(this));
+				serialPort.on("disconnect", function (error) {
+					this.emitters.forEach(function(emitter) {
+						emitter.emit("disconnect", error)
+					});
+				}.bind(this));
+				serialPort.on("close", function () {
+					this.emitters.forEach(function(emitter) {
+						emitter.emit("close")
+					});
+				}.bind(this));
 			}
-			serialPort.on( 'data' ,function( data ) {
-				this.receive(data.getRawBuffer())
-			}.bind( this ) ) // bind "this" to the enocean object
-			serialPort.on("error", function (error) {
-				this.emitters.forEach(function(emitter) {
-					emitter.emit("error", error)
-				});
-			}.bind(this));
-			serialPort.on("disconnect", function (error) {
-				this.emitters.forEach(function(emitter) {
-					emitter.emit("disconnect", error)
-				});
-			}.bind(this));
-			serialPort.on("close", function () {
-				this.emitters.forEach(function(emitter) {
-					emitter.emit("close")
-				});
-			}.bind(this));
 		}.bind( this ) ) // bind "this" to the enocean objec
 	}
 
@@ -132,10 +140,12 @@ function SerialPortListener( config ) {
 		try{
 
 			var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
-			serialPort.write( buf1 ) // write it to the serial port
-			this.emitters.forEach( function( emitter ) {
-				emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
-			} )
+			if (serialPort.isOpen()){
+				serialPort.write( buf1 ) // write it to the serial port
+				this.emitters.forEach( function( emitter ) {
+					emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
+				} )
+			}
 		}catch(err){
 			this.emitters.forEach( function( emitter ) {
 				emitter.emit( "sent-error" , { err : err , msg : msg } ) // emit en error whe somthing went wrong
@@ -146,13 +156,15 @@ function SerialPortListener( config ) {
 			// very simple send implemetation. expects a string (hex)
 			var p = new Promise(function(resolve,reject){
 				try{
-					var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
-					serialPort.write( buf1 , function(err){
-							if(err){reject(err)}else{resolve()}
-					}) // write it to the serial port
-					this.emitters.forEach( function( emitter ) {
-						emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
-					} )
+					if (serialPort.isOpen()){
+						var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
+						serialPort.write( buf1 , function(err){
+								if(err){reject(err)}else{resolve()}
+						}) // write it to the serial port
+						this.emitters.forEach( function( emitter ) {
+							emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
+						} )
+					}
 				}catch(err){
 					this.emitters.forEach( function( emitter ) {
 						emitter.emit( "sent-error" , { err : err , msg : msg } ) // emit en error whe somthing went wrong
