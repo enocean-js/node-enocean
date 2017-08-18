@@ -30,7 +30,7 @@
   "devDependencies": {
     "chai": "^3.3.0",
     "mocha": "^2.3.3",
-    "node-enocean-button": "^2.2.2",
+    "node-enocean-button": "^3.0.0",
     "node-enocean-dimmer": "^2.2.1"
   }
 }
