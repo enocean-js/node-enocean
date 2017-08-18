@@ -253,7 +253,7 @@ function SerialPortListener( config ) {
 
 SerialPortListener.prototype.__proto__ = EventEmitter.prototype // inherit from EventEmitter
 
-module.exports = function( config ) {
-	if( config == undefined) config = {} //if called with no config, pass an empty one
-		return new SerialPortListener( config ) // return a constructor
-	}
+module.exports = function (config) {
+if (config == undefined) config = {} //if called with no config, pass an empty one
+return new SerialPortListener(config) // return a constructor
+}
