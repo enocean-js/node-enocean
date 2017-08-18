@@ -13,7 +13,7 @@
 //     You should have received a copy of the GNU General Public License
 //     along with node-enocean.  If not, see <http://www.gnu.org/licenses/>.
 
-var SerialPort   = require( "serialport" ).SerialPort
+var SerialPort   = require( "serialport" )
 var EventEmitter = require( 'events' ).EventEmitter
 var fs           = require( "fs" )
 var Telegram     = require( "./modules/telegram.js" )
@@ -148,7 +148,7 @@ function SerialPortListener( config ) {
 				try{
 					var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
 					serialPort.write( buf1 , function(err){
-							if(err){reject(err)}else{resolve()}
+							serialPort.drain(err=>{if(err){reject(err)}else{resolve()}})
 					}) // write it to the serial port
 					this.emitters.forEach( function( emitter ) {
 						emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
