@@ -24,7 +24,7 @@
   "license": "ISC",
   "dependencies": {
     "level": "^1.6.0",
-    "serialport": "^3.0.0",
+    "serialport": "^4.0.7",
     "serialport-enocean-parser": "^0.1.0"
   },
   "devDependencies": {
