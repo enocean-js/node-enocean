@@ -23,10 +23,13 @@ var path = require("path")
 var fs             = require("fs")
 var level          = require("level")
 var knownSensors   = ""
-var db             = level(path.join(__dirname,"../memory"),{valueEncoding:'json'})
-module.exports     = function(app,config){
+var db             = null
+module.exports     = function(app,config){	
 	this.timerId=null
 	if( config    == undefined) config = {} // check if this was called with a config or not
+	// if a path to the memory dir was provided use that, otherwise use the default
+	var memoryDir = config.hasOwnProperty( "memoryDirectoryPath" ) ? config.memoryDirectoryPath : path.join(__dirname,"../memory")
+	db = level(memoryDir,{valueEncoding:'json'})	
 	// if a path to the sensorFile was provided use that, otherwise use the default
 	var outFile    = config.hasOwnProperty( "sensorFilePath" ) ? config.sensorFilePath : __dirname + '/knownSensors.json'
 	if(!fs.existsSync(outFile)){

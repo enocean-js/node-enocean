@@ -69,7 +69,7 @@ function SerialPortListener( config ) {
 				});
 			} else {
 				// when the serial port successfully opened
-				this.mem    = new Memory( this , { sensorFilePath : this.sensorFilePath } ) // initialize the Memory implementation used for learning an forgetting sensors. all meaningfull events are emitted there
+				this.mem    = new Memory( this , { sensorFilePath : this.sensorFilePath, memoryDirectoryPath : config.memoryDirectoryPath } ) // initialize the Memory implementation used for learning an forgetting sensors. all meaningfull events are emitted there
 				if( configFile.base === "00000000" || !configFile.hasOwnProperty( "base" ) ) { // if we dont know the base address yet
 					this.getBase( ) // get the base address from the attached device
 				} else { // if we know the base address
