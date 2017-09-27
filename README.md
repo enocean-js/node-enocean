@@ -173,8 +173,9 @@ you can also change the location of the configFile and the timeout of the learni
 
 ```
 var enocean      = require("node-enocean")({
-sensorFilePath:"/path/to/sensorfile"},
-configFilePath:"/path/to/configFile"},
+sensorFilePath:"/path/to/sensorfile",
+configFilePath:"/path/to/configFile",
+memoryDirectoryPath:"/path/to/memorydirectory",
 timeout:30
 });
 ```
