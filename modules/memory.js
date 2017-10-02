@@ -28,10 +28,11 @@ module.exports     = function(app,config){
 	this.timerId=null
 	if( config    == undefined) config = {} // check if this was called with a config or not
 	// if a path to the memory dir was provided use that, otherwise use the default
-	var memoryDir = config.hasOwnProperty( "memoryDirectoryPath" ) ? config.memoryDirectoryPath : path.join(__dirname,"../memory")
+	var memoryDir = config.memoryDirectoryPath || path.join(__dirname,"../memory")
 	db = level(memoryDir,{valueEncoding:'json'})
+	app.db=db
 	// if a path to the sensorFile was provided use that, otherwise use the default
-	var outFile    = config.hasOwnProperty( "sensorFilePath" ) ? config.sensorFilePath : __dirname + '/knownSensors.json'
+	var outFile    = config.sensorFilePath || path.join(__dirname + '/knownSensors.json')
 	if(!fs.existsSync(outFile)){
 		fs.writeFileSync(outFile,"{}")
 	}
