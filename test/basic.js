@@ -68,7 +68,7 @@ describe('enocean(basic)', function() {
       })
       eno.on("learned",function(data){
         assert.equal(data.id,"0006d1a6")
-        done()
+        eno.close(function(){done()})
       })
 
     });
@@ -84,11 +84,12 @@ describe('enocean(basic)', function() {
       	eno.listen("/dev/ttyUSB0")
       	eno.on("data",function(data){
       	assert.equal(data.senderId,"0006d1a6");
-      	eno.close(function(){done()})
+				eno.close(function(){done()})
       })
       eno.on("ready",function(){
       	 eno.receive(new Buffer("55000a0701eba5ff0274080006d1a60001ffffffff3a00a2","hex"))
       })
+
     });
 
     it('should know the content of a telegram from a known sender', function (done) {
@@ -105,13 +106,11 @@ describe('enocean(basic)', function() {
       })
 
     });
-    it('should save the last telegram of known sensors', function (done) {
+    it('should save the last telegram of known sensors', function () {
 			var data = eno.getLastValues("0006d1a6").then(function(data){
 				assert.equal(data.values[0].type,"Temperature");
 	      assert.equal(data.values[0].value,"23.607843137254903");
-				done()
-			})
-
+			}).catch(function(err){console.log("...")})
     });
 
     it('should be able to forget learned sensors', function () {
