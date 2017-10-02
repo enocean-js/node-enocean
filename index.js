@@ -61,7 +61,6 @@ function SerialPortListener( config ) {
 		serialPort      = new SerialPort( port , { baudrate: 57600 , parser: parser, autoOpen: false } )
 		serialPort.on("error", function (error) {console.log(error)});
 		serialPort.open(function(err, result ) {
-			console.log("hallo")
 			if (err) {
 				console.log(err);
 				this.emitters.forEach(function(emitter) {
@@ -92,6 +91,7 @@ function SerialPortListener( config ) {
 					});
 				}.bind(this));
 				serialPort.on("close", function () {
+					console.log("close")
 					this.emitters.forEach(function(emitter) {
 						emitter.emit("close")
 					});
