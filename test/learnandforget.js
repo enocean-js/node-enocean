@@ -144,7 +144,7 @@ describe('enocean(learn and forget)', function() {
     })
     setTimeout(function(){
       assert.equal(flag,0)
-      done()
+      eno.close(function(){done()})
     },1000)
   });
 
@@ -162,9 +162,10 @@ describe('enocean(learn and forget)', function() {
     eno.on("learned",function(data){
       flag=1
     })
+
     setTimeout(function(){
       assert.equal(flag,0)
-      done()
+      eno.close(function(){done()})
     },1000)
   });
   it('should ignore data telegrams when in forget mode', function (done) {
@@ -183,14 +184,14 @@ describe('enocean(learn and forget)', function() {
     })
     setTimeout(function(){
       assert.equal(flag,0)
-      done()
+      eno.close(function(){done()})
     },1000)
   });
   it('should ignore learn telegrams when sensor is already known', function (done) {
     eno=en(testConfig)
     eno.listen("/dev/ttyUSB0")
     eno.timeout=1
-    
+
     var flag=0
     eno.on("ready",function(){
       eno.learn({
@@ -204,7 +205,7 @@ describe('enocean(learn and forget)', function() {
     })
     eno.on("learn-mode-stop",function(data){
       if(data.code == 0 ){flag=1}
-      if(data.code == 1 && flag===1){done()}
+      if(data.code == 1 && flag===1){eno.close(function(){done()})}
       //eno.receive(new Buffer(data4BS,"hex"))
     })
 
@@ -213,7 +214,7 @@ describe('enocean(learn and forget)', function() {
     eno=en(testConfig)
     eno.listen("/dev/ttyUSB0")
     eno.timeout=1
-    
+
     var flag=0
     eno.on("ready",function(){
       eno.learn({
@@ -224,11 +225,12 @@ describe('enocean(learn and forget)', function() {
       })
     })
     eno.on("learned",function(data){
+			eno.startLearning()
       eno.forget("0006d1a6")
     })
     eno.on("forgotten",function(data){
       assert.equal(eno.getSensors().hasOwnProperty(data.id),false)
-      done()
+      eno.close(function(){done()})
     })
 
   });
