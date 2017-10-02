@@ -56,7 +56,11 @@ module.exports     = function(app,config){
 				var sensor  = knownSensors[ data.senderId ] // get the sensor Info like the eep and manufacurer Info from the memory file
 				data.sensor = sensor // attach that info to the telegram data
 				data.values = app.getData( sensor.eep , data.raw ) // actually extract the Data
-				data.data = app.getData2( sensor.eep , data.rawByte ) // actually extract the Data
+				try{
+					data.data = app.getData2( sensor.eep , data.rawByte ) // actually extract the Data
+				}catch(err){
+					console.log("not supported")
+				}
 				db.put(data.senderId ,data,function(err){}) // store this Telegram in memory
 				app.emitters.forEach(function(emitter){
 					emitter.emit("known-data",data) // and emmit an event propagating the extracted Data downstream
