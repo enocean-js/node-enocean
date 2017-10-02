@@ -24,12 +24,12 @@ var fs             = require("fs")
 var level          = require("level")
 var knownSensors   = ""
 var db             = null
-module.exports     = function(app,config){	
+module.exports     = function(app,config){
 	this.timerId=null
 	if( config    == undefined) config = {} // check if this was called with a config or not
 	// if a path to the memory dir was provided use that, otherwise use the default
 	var memoryDir = config.hasOwnProperty( "memoryDirectoryPath" ) ? config.memoryDirectoryPath : path.join(__dirname,"../memory")
-	db = level(memoryDir,{valueEncoding:'json'})	
+	db = level(memoryDir,{valueEncoding:'json'})
 	// if a path to the sensorFile was provided use that, otherwise use the default
 	var outFile    = config.hasOwnProperty( "sensorFilePath" ) ? config.sensorFilePath : __dirname + '/knownSensors.json'
 	if(!fs.existsSync(outFile)){
@@ -62,7 +62,7 @@ module.exports     = function(app,config){
 					emitter.emit("known-data",data) // and emmit an event propagating the extracted Data downstream
 				} )
 
-				fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {} ) // and save it to disk
+				//fs.writeFile( outFile , JSON.stringify( knownSensors , null , 4 ) , function( err ) {} ) // and save it to disk
 			} else {
 				// if it is a learn telegram, check if we are in "teach in"-mode
 				if( app.learnMode === "on" ) {
