@@ -20,7 +20,7 @@ var Telegram     = require( "./modules/telegram.js" )
 var crc          = require( "./modules/crc.js" )
 var Memory       = require( "./modules/memory.js" )
 var eepDesc      = require("./modules/eepDesc.js")
-var decode       = require("./modules/genericResolver.js")
+var transcoder       = require("eep-transcoder")
 var parser       = require("serialport-enocean-parser")
 function SerialPortListener( config ) {
 	// read the config object passed to the constructor. fill the non existin fileds with defaults
@@ -196,9 +196,9 @@ function SerialPortListener( config ) {
 		}.bind( this ) , 1000 )
 	}
 	this.getData2 = function(eep,data){
-		var ret2 = decode(data.substring(12,data.length),eep)
+		var ret2 = transcoder.decode(data,eep)
 		if( ret2 !== null ) {
-			return ret2
+			return ret2.decoded
 		}
 	}
 	this.getData = function( eep , data ) {
