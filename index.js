@@ -51,6 +51,7 @@ function SerialPortListener( config ) {
 	// used to close the serial port. usefull for CLI inerfaces or tests
 	this.close          = function( callback ) {
 		serialPort.close( function(){
+			this.removeAllListeners()
 			this.db.close(callback)
 		}.bind(this))
 	}.bind(this)
@@ -93,7 +94,6 @@ function SerialPortListener( config ) {
 					});
 				}.bind(this));
 				serialPort.on("close", function () {
-					console.log("close")
 					this.emitters.forEach(function(emitter) {
 						emitter.emit("close")
 					});
