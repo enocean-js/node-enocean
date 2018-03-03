@@ -137,5 +137,24 @@ describe('enocean(basic)', function() {
     it('should not throw on illegal values', function () {
     	assert.doesNotThrow(function(){eno.send("Bla")})
   	});
+		it('should not leak listeners (as per #40)',async function () {
+			eno=en(testConfig)
+			for(var i = 0;i<100;i++){
+				await test()
+			}
 
+
+
+
+			function test(){
+				eno.listen("/dev/ttyUSB0")
+				return new Promise(function(resolve,reject){
+					eno.on("ready",function(){
+						eno.close(function(){
+							resolve()
+						})
+					})
+				})
+			}
+		});
 });
