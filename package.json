@@ -25,8 +25,8 @@
   "dependencies": {
     "ansi": "^0.3.1",
     "eep-transcoder": "^0.1.0",
-    "level": "^1.6.0",
-    "serialport": "^4.0.7",
+    "level": "^6.0.0",
+    "serialport": "^8.0.7",
     "serialport-enocean-parser": "^0.1.0"
   },
   "devDependencies": {

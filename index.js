@@ -61,7 +61,7 @@ function SerialPortListener( config ) {
 		// use /dev/ttyUSBx for USB Sticks
 		// use /dev/ttyAMA0 for enocean pi
 		// use /dev/COM1 for USB Sticks on Windows
-		serialPort      = new SerialPort( port , { baudrate: 57600 , parser: parser, autoOpen: false } )
+		serialPort      = new SerialPort( port , { baudRate: 57600 , parser: parser, autoOpen: false } )
 		serialPort.on("error", function (error) {console.log(error)});
 		serialPort.open(function(err, result ) {
 			if (err) {
@@ -81,7 +81,7 @@ function SerialPortListener( config ) {
 					} )
 				}
 				serialPort.on( 'data' ,function( data ) {
-					this.receive(data.getRawBuffer())
+					this.receive(data)
 				}.bind( this ) ) // bind "this" to the enocean object
 				serialPort.on("error", function (error) {
 					this.emitters.forEach(function(emitter) {
@@ -142,7 +142,7 @@ function SerialPortListener( config ) {
 		try{
 
 			var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
-			if (serialPort.isOpen()){
+			if (serialPort.isOpen){
 				serialPort.write( buf1 ) // write it to the serial port
 				this.emitters.forEach( function( emitter ) {
 					emitter.emit( "sent" , msg ) // emit a sent event when we where able to sen something. does not mean the sending itself was successful though
@@ -158,7 +158,7 @@ function SerialPortListener( config ) {
 			// very simple send implemetation. expects a string (hex)
 			var p = new Promise(function(resolve,reject){
 				try{
-					if (serialPort.isOpen()){
+					if (serialPort.isOpen){
 						var buf1 = new Buffer( msg , "hex" ) // turn msg into a Buffer
 						serialPort.write( buf1 , function(err){
 								serialPort.drain(err=>{if(err){reject(err)}else{resolve()}})
